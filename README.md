@@ -11,23 +11,8 @@
 - ***prop-types*** - набор валидаторов, которые могут быть использованы для проверки получаемых данных.
 - ***styled-components*** - система стилизации react компонентов.
 - ***cypress*** — e2e тестирование для веб приложений.
-
- ### Для react native
-- ***Node.js*** - программная платформа, основанная на движке V8 (транслирующем JavaScript в машинный код).
-- ***Babel*** - транспайлер, преобразующий код из одного стандарта в другой.
-- ***Metro Bundler*** - сборщик для RN проектов.
-- ***yarn*** - менеджер пакетов.
-- ***react-navigations*** - библиотека для навигации в RN.
-- ***react-redux*** - инструмент управления состоянием.
-- ***prop-types*** - набор валидаторов, которые могут быть использованы для проверки получаемых данных.
-- ***styled-components*** - система стилизации react компонентов.
-- ***detox*** - e2e тестирование для RN приложений.
-
 ## Структура проекта
 
-#### Пример необходимой структуры проекта:
-
-> ![structure_1](https://github.com/slava-ovchinnikov/education-task-calculator/blob/master/doc/structure_1.png?raw=true)
 
 #### Пояснения к корневой папке:
 - ***.vscode*** - папка для конфигурационных файлов ***VS CODE***.
@@ -99,8 +84,6 @@
 [React redux](https://react-redux.js.org/introduction/quick-start)
 
 [Тестирование Cypress](https://docs.cypress.io/guides/overview/why-cypress.html#In-a-nutshell)
-
-[Тестирование Detox](https://github.com/wix/Detox/blob/master/docs/README.md)
 
 [Styled-components](https://www.styled-components.com/docs)
 

@@ -1,23 +1,29 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 
 import {
     emailOnChange,
     passwordOnChange,
+    roleOnChange,
     signInSucces, signInFailed,
     signUpSuccess, signUpFailed,
     signOutSuccess, signOutFailed,
     checkAuthSuccess, checkAuthFailed,
-} from "@/actions"
+} from '@/actions'
 
 const INITIAL_STATE = {
+    roles: [
+        { value: 0, label: 'Ученик' },
+        { value: 1, label: 'Учитель' },
+        { value: 2, label: 'Родитель' },
+        { value: 3, label: 'Свободный слушатель' },
+        // { value: 'admin', label: ' Администратор' },
+    ],
     id: '',
     email: '',
     password: '',
-    signInError: '',
-    signUpError: '',
+    role: {},
+    userRole: null,
     isAuth: false,
-    successInResponse: false,
-    successUpResponse: false,
 }
 
 export default handleActions({
@@ -27,17 +33,20 @@ export default handleActions({
     [passwordOnChange](state, action) {
         return { ...state, password: action.payload.password }
     },
+    [roleOnChange](state, action) {
+        return { ...state, role: action.payload.role }
+    },
     [signInSucces](state, action) {
-        return { ...state, successInResponse: true, isAuth: true }
+        return { ...state, isAuth: true }
     },
     [signInFailed](state, action) {
-        return { ...state, signInError: action.payload.error, successInResponse: false, isAuth: false }
+        return { ...state, isAuth: false }
     },
     [signUpSuccess](state) {
-        return { ...state, email: '', password: '', successUpResponse: true, isAuth: true }
+        return { ...state, email: '', password: '', isAuth: true }
     },
     [signUpFailed](state, action) {
-        return { ...state, signUpError: action.payload.error, successUpResponse: false }
+        return { ...state }
     },
     [signOutSuccess](state) {
         return { ...state, email: '', password: '', isAuth: false }
@@ -46,19 +55,19 @@ export default handleActions({
         return { ...state }
     },
     [checkAuthSuccess](state, action) {
-        return { ...state, isAuth: true }
+        return { ...state, isAuth: true, id: action.payload.id, userRole: action.payload.role }
     },
     [checkAuthFailed](state, action) {
-        return { ...state }
+        return { ...state, isAuth: false }
     },
 }, INITIAL_STATE)
 
+export const getLoginState = state => state
 export const getId = state => state.id
 export const getEmail = state => state.email
 export const getPassword = state => state.password
+export const getRoles = state => state.roles
+export const getRole = state => state.role
+export const getUserRole = state => state.userRole
 export const getToken = state => state.token
-export const getSignInError = state => state.signInError
-export const getSignUpError = state => state.signUpError
 export const getIsAuth = state => state.isAuth
-export const getSuccessInResponse = state => state.successInResponse
-export const getSuccessUpResponse = state => state.successUpResponse

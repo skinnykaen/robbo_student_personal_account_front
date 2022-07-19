@@ -1,17 +1,22 @@
 import React from 'react'
 import Select from 'react-select'
-import { useDispatch } from 'react-redux'
 
+import { useSelector } from 'react-redux'
+
+import Button from '../UI/Button'
 
 import { SelectWrapper, CreateNew } from './componets'
-import { createProjectPage } from '@/actions'
 
 import Flex from '@/components/Flex'
-import Button from '../UI/Button'
+
+import { getNewProjectId } from '@/reducers/myProjects'
+import config from '@/config'
+import { useActions } from '@/helpers/useActions'
 
 export default () => {
 
-    const dispath = useDispatch()
+    const { createProjectPage } = useActions()
+    const newProjectId = useSelector(state => getNewProjectId(state.myProjects))
 
     const options = [
         { value: 'last-modified', label: 'Последнее изменение' },
@@ -29,10 +34,10 @@ export default () => {
         option: (base, state) => ({
             ...base,
             height: '100%',
-            backgroundColor: state.isSelected ? "green" : "white",
-            "&:hover": {
-                backgroundColor: "green",
-                color: "white",
+            backgroundColor: state.isSelected ? 'green' : 'white',
+            '&:hover': {
+                backgroundColor: 'green',
+                color: 'white',
             },
         }),
 
@@ -42,13 +47,16 @@ export default () => {
     const token = localStorage.getItem('token')
 
     const createNewProjectPageHandler = () => {
-        dispath(createProjectPage(token))
-        window.location.replace('https://scratch.mit.edu/projects/703215105/')
+        createProjectPage(token)
+    }
+
+    if (newProjectId) {
+        window.location.replace(config.scratchURL + '?#' + newProjectId)
     }
 
     return (
-        <Flex width="100%" margin="0 0 2rem 0"
-            justify="space-between" align="center">
+        <Flex width='100%' margin='0 0 2rem 0'
+            justify='space-between' align='center'>
             <SelectWrapper>
                 <Select
                     styles={customStyles}
@@ -57,9 +65,9 @@ export default () => {
                 />
             </SelectWrapper>
             <CreateNew>
-                <Button content="Создать новый"
-                    background="grey"
-                    padding="0.5rem"
+                <Button content='Создать новый'
+                    background='grey'
+                    padding='0.5rem'
                     handleSubmit={createNewProjectPageHandler} />
             </CreateNew>
         </Flex>

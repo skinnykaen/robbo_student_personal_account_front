@@ -31,9 +31,9 @@ export const SignIn = styled.div`
     width: 100%;
     height: 100%;
     cursor: pointer;
-    background: ${({ signIn }) => signIn ? "linear-gradient(to right, #14163c 0%, #03217b 79%)" : "white"};
-    color: ${({ signIn }) => signIn ? "white" : "black"};
-    box-shadow: ${({ signIn }) => signIn ? "inset -10px -10px 50px black" : "none"};
+    background: ${({ signIn }) => signIn ? 'linear-gradient(to right, #14163c 0%, #03217b 79%)' : 'white'};
+    color: ${({ signIn }) => signIn ? 'white' : 'black'};
+    box-shadow: ${({ signIn }) => signIn ? 'inset -10px -10px 50px black' : 'none'};
     border-bottom-right-radius: 10px;
 `
 
@@ -44,9 +44,9 @@ export const SignOut = styled.div`
     width: 100%;
     height: 50px;
     cursor: pointer;
-    background: ${({ signIn }) => !signIn ? "linear-gradient(to right, #14163c 0%, #03217b 79%)" : "white"};
-    color: ${({ signIn }) => !signIn ? "white" : "black"};
-    box-shadow: ${({ signIn }) => !signIn ? "inset 10px -10px 50px black" : "none"};
+    background: ${({ signIn }) => !signIn ? 'linear-gradient(to right, #14163c 0%, #03217b 79%)' : 'white'};
+    color: ${({ signIn }) => !signIn ? 'white' : 'black'};
+    box-shadow: ${({ signIn }) => !signIn ? 'inset 10px -10px 50px black' : 'none'};
     border-bottom-left-radius: 10px;
 `
 
@@ -105,6 +105,10 @@ export const WelcomeText = styled.h2`
   color: black;
 `
 
+export const Text = styled.p`
+  font-size: 16px;
+`
+
 export const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -112,6 +116,21 @@ export const InputContainer = styled.div`
   align-items: center;
   height: 20%;
   width: 100%;
+`
+
+export const SelectContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem;
+  width: 70%;
+  text-transform: none;
+  letter-spacing: 0;
+  @media only screen and (min-width: 320px) and (max-width: 768px), (min-width: 1280px){
+    flex-direction: column;
+    gap: 0.3rem;
+  }
 `
 
 export const ButtonContainer = styled.div`

@@ -1,9 +1,6 @@
-import React, { useEffect, useState, memo } from 'react'
+import React, { useEffect, memo } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-
-
-import { WelcomeText } from '../Clients/components'
 
 import PageLayout from '@/components/PageLayout'
 import { checkAccess, useUserIdentity } from '@/helpers'
@@ -59,7 +56,7 @@ export default memo(() => {
 
     return (
         <PageLayout>
-            <WelcomeText>Profile</WelcomeText>
+            Profile
             {
                 loading || loginLoading
                     ? <Loader />

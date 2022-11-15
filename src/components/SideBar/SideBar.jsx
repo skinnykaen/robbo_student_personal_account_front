@@ -4,12 +4,7 @@ import { Menu } from 'antd'
 import { useHistory } from 'react-router-dom'
 
 import {
-    SidebarDataSuperAdmin,
     SidebarDataStudent,
-    SidebarDataParent,
-    SidebarDataTeacher,
-    SidebarDataUnitAdmin,
-    SidebarDataFreeListener,
 } from './SideBarData.jsx'
 
 import { useActions } from '@/helpers/useActions'
@@ -25,26 +20,6 @@ export default () => {
     switch (userRole) {
         case 0: {
             SideBarData = SidebarDataStudent
-            break
-        }
-        case 1: {
-            SideBarData = SidebarDataTeacher
-            break
-        }
-        case 2: {
-            SideBarData = SidebarDataParent
-            break
-        }
-        case 3: {
-            SideBarData = SidebarDataFreeListener
-            break
-        }
-        case 4: {
-            SideBarData = SidebarDataUnitAdmin
-            break
-        }
-        case 5: {
-            SideBarData = SidebarDataSuperAdmin
             break
         }
     }

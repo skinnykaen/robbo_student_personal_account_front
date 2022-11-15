@@ -22,8 +22,6 @@ if (typeof window !== 'undefined') {
   injectStyle()
 }
 
-
-
 const container = document.getElementById('root')
 const root = createRoot(container)
 

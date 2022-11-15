@@ -1,24 +1,11 @@
 import React, { memo, useState, useEffect } from 'react'
-import { Button, Select, Form, Input } from 'antd'
+import { Button, Form, Input } from 'antd'
 import { PropTypes } from 'prop-types'
-
-import {
-    FREE_LISTENER, PARENT,
-    STUDENT, TEACHER,
-    userRole,
-} from '@/constants'
 
 const SignUpForm = memo(({
     handleSubmit,
     needSelectRole,
 }) => {
-    const roles = [
-        { value: STUDENT, label: userRole[STUDENT] },
-        { value: TEACHER, label: userRole[TEACHER] },
-        { value: PARENT, label: userRole[PARENT] },
-        { value: FREE_LISTENER, label: userRole[FREE_LISTENER] },
-    ]
-
     const [form] = Form.useForm()
     const [, forceUpdate] = useState({})
     useEffect(() => {
@@ -38,8 +25,8 @@ const SignUpForm = memo(({
                 middlename,
             }) => {
                 return handleSubmit({
-                    email, password, role, nickname, lastname, firstname, middlename,
-                })
+                    email, password, nickname, lastname, firstname, middlename,
+                }, 0)
             }}
             form={form}
         >
@@ -128,24 +115,6 @@ const SignUpForm = memo(({
                     size='large'
                 />
             </Form.Item>
-            {
-                needSelectRole &&
-                <Form.Item
-                    label='Выберите роль' name='role'
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Пожалуйста, введите вашу роль!',
-                        },
-                    ]}
-                >
-                    <Select
-                        options={roles}
-                        size='large'
-                    />
-                </Form.Item>
-            }
-
             <Form.Item shouldUpdate>
                 {
                     () => (

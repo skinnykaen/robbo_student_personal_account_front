@@ -59,7 +59,7 @@ export default () => {
 
     return (
         <PageLayout>
-            {loginLoading
+            {loginLoading || loading
                 ? <Loader />
                 : (
                     <Flex direction='column' align='flex-start'

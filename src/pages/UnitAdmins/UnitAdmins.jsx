@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
 import { Redirect } from "react-router-dom"
+import { Select } from 'antd'
 
 import { WelcomeText } from "./components"
 
@@ -40,6 +41,18 @@ export default () => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
+    const [sortValue, setSort] = useState('sortBy')
+    const handleChange = sortValue => {
+        switch (sortValue) {
+            case 'alphabet':
+                unitAdmins.sort((a, b) => a.userHttp.lastname > b.userHttp.lastname ? 1 : -1)
+                break
+            default:
+                unitAdmins.sort((a, b) => a.userHttp.id > b.userHttp.id ? 1 : -1)
+                break
+        }
+    }
+
     return (
         <PageLayout>
             <WelcomeText>Unit Админы</WelcomeText>
@@ -50,13 +63,29 @@ export default () => {
                     <AddUnitAdmin />
                 )}
             />
-            <Flex direction='row' justify='flex-end'
+            <Flex direction='column' justify='flex-end'
                 align='flex-start'>
                 <Button
                     background='green'
                     content='Добавить Unit Админа'
                     padding='0.5rem'
+                    margin='0.5rem'
                     handleSubmit={() => { setOpenAddUnitAdmin(true) }}
+                />
+                <Select
+                    style={{ width: 180, margin: '0.5rem' }}
+                    defaultValue='Сортировка'
+                    onChange={setSort}
+                    options={[
+                        {
+                            value: 'alphabet',
+                            label: 'По алфавиту',
+                        },
+                        {
+                            value: 'sortBy',
+                            label: 'Сортировка',
+                        },
+                    ]}
                 />
             </Flex>
             {
@@ -67,6 +96,7 @@ export default () => {
                             justify=' center'
                         >
                             <Flex direction='column'>
+                                {handleChange(sortValue)}
                                 {
                                     unitAdmins?.map((unitAdmin, index) => {
                                         return (

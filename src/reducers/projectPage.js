@@ -35,7 +35,7 @@ export default handleActions({
         return { ...state, projectPage: { ...state.projectPage, isShared: action.payload.isShared } }
     },
     [clearProjectPageState](state, action) {
-        return { ...state, loading: false, projectPage: {} }
+        return { ...state, loading: true, projectPage: {} }
     },
 }, INITIAL_STATE)
 

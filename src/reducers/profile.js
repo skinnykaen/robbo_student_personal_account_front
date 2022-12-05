@@ -1,9 +1,13 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    clearProfileState, deleteProfile, deleteProfileFailed,
-    deleteProfileSuccess, getProfileById, getProfileByIdFailed,
-    getProfileByIdSuccess, updateProfile, updateProfileFailed, updateProfileSuccess,
+    clearProfileState,
+    getProfileById,
+    getProfileByIdFailed,
+    getProfileByIdSuccess,
+    updateProfile,
+    updateProfileFailed,
+    updateProfileSuccess,
 } from '@/actions/profile'
 
 const INITIAL_STATE = {
@@ -14,33 +18,24 @@ const INITIAL_STATE = {
 export default handleActions({
 
     [clearProfileState](state) {
-        return { ...state, profile: {}, loading: false }
+        return INITIAL_STATE
     },
     [getProfileById](state) {
         return { ...state, loading: true }
     },
-    [getProfileByIdSuccess](state, action) {
+    [getProfileByIdSuccess](state, { payload }) {
         return {
-            ...state, loading: false, profile: action.payload.response,
+            ...state, loading: false, profile: payload.response,
         }
     },
     [getProfileByIdFailed](state, action) {
         return { ...state, loading: false }
     },
-    [deleteProfile](state) {
-        return { ...state, loading: true }
-    },
-    [deleteProfileSuccess](state, action) {
-        return { ...state, loading: false }
-    },
-    [deleteProfileFailed](state, action) {
-        return { ...state, loading: false }
-    },
     [updateProfile](state, action) {
         return { ...state, loading: true }
     },
-    [updateProfileSuccess](state, action) {
-        return { ...state, loading: false }
+    [updateProfileSuccess](state, { payload }) {
+        return { ...state, loading: false, profile: { ...state.profile, ...payload.response } }
     },
     [updateProfileFailed](state, action) {
         return { ...state, loading: false }

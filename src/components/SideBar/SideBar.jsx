@@ -7,13 +7,13 @@ import {
     SidebarDataStudent,
 } from './SideBarData.jsx'
 
-import { useActions } from '@/helpers/useActions'
+import { useActions } from '@/helpers'
 import { getLoginState } from '@/reducers/login'
-
+import { signOutRequest } from '@/actions'
 
 export default () => {
     const history = useHistory()
-    const { signOutRequest } = useActions()
+    const action = useActions({ signOutRequest }, [])
     const { userRole } = useSelector(({ login }) => getLoginState(login))
 
     let SideBarData = []
@@ -26,7 +26,7 @@ export default () => {
 
     const onMenuClick = ({ item, key, keyPath, selectedKeys, domEvent }) => {
         if (item.props.pathname === '/login') {
-            signOutRequest()
+            action.signOutRequest()
             history.push(item.props.pathname)
         }
         else {

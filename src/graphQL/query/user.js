@@ -18,6 +18,22 @@ export const usersGQL = {
             }
         }
     }`,
+
+    GET_STUDENT_BY_ACCESS_TOKEN: gql`
+    query {
+        GetStudentByAccessToken{
+            userHttp{
+                id
+                lastname
+                firstname
+                middlename
+                nickname
+                email
+                createdAt
+                role
+            }
+        }
+    }`,
 }
 
 export const usersQueryGraphQL = {
@@ -26,6 +42,14 @@ export const usersQueryGraphQL = {
             {
                 query: usersGQL.GET_STUDENT_BY_ID,
                 variables: studentId,
+            },
+        )
+    },
+
+    getStudentByAccessToken() {
+        return graphQLClient.query(
+            {
+                query: usersGQL.GET_STUDENT_BY_ACCESS_TOKEN,
             },
         )
     },

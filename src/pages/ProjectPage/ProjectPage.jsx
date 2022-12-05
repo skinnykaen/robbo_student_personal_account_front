@@ -1,55 +1,37 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams, Redirect } from 'react-router-dom'
-import { Input, Button, Form } from 'antd'
+import { Input, Button, Form, Switch } from 'antd'
 
-import { UnsharedMessage } from './components'
-
-import PageLayout from '@/components/PageLayout'
-import Flex from '@/components/Flex'
-import config from '@/config'
-import Loader from '@/components/Loader'
-import { useActions } from '@/helpers/useActions'
-import { checkAccess, useUserIdentity } from '@/helpers'
+import { getProjectPageById, clearProjectPageState, updateProjectPage } from '@/actions'
+import { checkAccess, useUserIdentity, useActions } from '@/helpers'
 import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import { getProjectPagesState } from '@/reducers/myProjects'
+import PageLayout from '@/components/PageLayout'
+import Flex from '@/components/Flex'
+import Loader from '@/components/Loader'
+import config from '@/config'
 
 const { TextArea } = Input
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
+    const [form] = Form.useForm()
+    const { projectPageId } = useParams()
 
-    const {
+    const actions = useActions({
         getProjectPageById,
         clearProjectPageState,
         updateProjectPage,
-    } = useActions()
-
-    const layout = {
-        labelCol: {
-            span: 8,
-        },
-        wrapperCol: {
-            span: 16,
-        },
-    }
-    const [form] = Form.useForm()
-    const { projectPageId } = useParams()
-    const token = localStorage.getItem('token')
+    }, [])
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT]))
-            getProjectPageById(token, projectPageId)
-        return () => {
-            clearProjectPageState()
-        }
+            actions.getProjectPageById(projectPageId)
+        return () => actions.clearProjectPageState()
     }, [loginLoading])
 
     const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPagesState(projectPage))
-
-    const seeInsideHandler = () => {
-        window.location.replace(config.scratchURL + `?#${projectPageId}`)
-    }
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
         return <Redirect to={HOME_PAGE_ROUTE} />
@@ -57,28 +39,22 @@ export default () => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
+    const seeInsideHandler = () => {
+        window.location.replace(config.scratchURL + `?#${projectPageId}`)
+    }
+
     return (
         <PageLayout>
-            {loading
+            {loading || loginLoading
                 ? <Loader />
                 : (
                     <Flex direction='column' align='flex-start'
                         width='100%' height='100%'
                         padding='2rem'>
-                        {
-                            !projectPage.isShared &&
-                            <UnsharedMessage>
-                                <Flex align='center' width='100%'
-                                    height='100%' justify='space-between' >
-                                    <span>Данный проект не открыт для общего доступа</span>
-                                    <Button>Открыть</Button>
-                                </Flex>
-                            </UnsharedMessage>
-                        }
-
                         <Form
                             name='normal_project-page'
                             className='project-page-form'
+                            labelWrap
                             {...layout}
                             form={form}
                             initialValues={{
@@ -87,7 +63,14 @@ export default () => {
                                 notes: projectPage.notes,
                             }}
                             onFinish={({ title, instruction, notes }) => {
-                                updateProjectPage(token, { ...projectPage, title, instruction, notes })
+                                actions.updateProjectPage({
+                                    projectPageId: projectPageId,
+                                    projectId: projectPage.projectId,
+                                    title: title,
+                                    instruction: instruction,
+                                    notes: notes,
+                                    isShared: projectPage.isShared,
+                                })
                             }}
                         >
                             <Form.Item
@@ -108,6 +91,28 @@ export default () => {
                             >
                                 <TextArea size='large' rows={4} />
                             </Form.Item>
+                            <Form.Item label='Последнее обновление'>
+                                {projectPage.lastModified}
+                            </Form.Item>
+                            {
+                                projectPage.isShared
+                                    ? (
+                                        <Form.Item
+                                            name='isShared' label='Закрыть доступ'
+                                            valuePropName='checked'
+                                        >
+                                            <Switch defaultChecked onChange={() => { }} />
+                                        </Form.Item>
+                                    )
+                                    : (
+                                        <Form.Item
+                                            name='isShared' label='Открыть доступ'
+                                            valuePropName='checked'
+                                        >
+                                            <Switch onChange={() => { }} />
+                                        </Form.Item>
+                                    )
+                            }
                             <Form.Item >
                                 <Button
                                     type='primary' htmlType='submit'
@@ -128,4 +133,13 @@ export default () => {
             }
         </PageLayout>
     )
+}
+
+const layout = {
+    labelCol: {
+        span: 8,
+    },
+    wrapperCol: {
+        span: 16,
+    },
 }

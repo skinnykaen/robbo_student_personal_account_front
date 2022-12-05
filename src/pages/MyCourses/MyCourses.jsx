@@ -3,30 +3,25 @@ import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
 import { WelcomeText } from './components'
-
 import CoursePageItem from './MyCoursesItem'
 
 import PageLayout from '@/components/PageLayout'
 import Loader from '@/components/Loader'
+import { getAllCoursePages, clearAllCoursePagesState } from '@/actions'
 import { getCoursePages, getCoursePagesLoading } from '@/reducers/myCourses'
-
-import { useUserIdentity } from '@/helpers/useUserIdentity'
 import Flex from '@/components/Flex'
-import { useActions } from '@/helpers/useActions'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT, SUPER_ADMIN } from '@/constants'
-import { checkAccess } from '@/helpers'
+import { checkAccess, useActions, useUserIdentity } from '@/helpers'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
 
-    const { getAllCoursePages, clearAllCoursePagesState } = useActions()
+    const actions = useActions({ getAllCoursePages, clearAllCoursePagesState }, [])
     const token = localStorage.getItem('token')
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN]))
-            getAllCoursePages(token)
-        return () => {
-            clearAllCoursePagesState()
-        }
+            actions.getAllCoursePages(token)
+        return () => actions.clearAllCoursePagesState()
     }, [loginLoading])
 
     const coursePages = useSelector(({ myCourses }) => getCoursePages(myCourses))

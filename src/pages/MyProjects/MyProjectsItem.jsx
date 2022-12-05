@@ -5,14 +5,14 @@ import { Button, Space } from 'antd'
 import { ProjectPageItem, ScratchLink, LastModified, RemoveProjectPage } from './components'
 
 import config from '@/config'
-import { useActions } from '@/helpers/useActions'
+import { useActions } from '@/helpers'
 import Flex from '@/components/Flex'
+import { deleteProjectPage } from '@/actions'
 
 export default ({ projectPageIndex, projectPage }) => {
 
-    const { deleteProjectPage } = useActions()
+    const action = useActions({ deleteProjectPage }, [])
     const history = useHistory()
-    const token = localStorage.getItem('token')
 
     const toProjectPageHandler = () => {
         history.push(`/projects/${projectPage.projectPageId}`)
@@ -35,7 +35,7 @@ export default ({ projectPageIndex, projectPage }) => {
             </Space>
             <Flex width='58%' justify='flex-end'
                 align='center'>
-                <RemoveProjectPage onClick={() => deleteProjectPage(token, projectPage.projectPageId, projectPageIndex)}>
+                <RemoveProjectPage onClick={() => action.deleteProjectPage(projectPage.projectPageId, projectPageIndex)}>
                     удалить
                 </RemoveProjectPage>
             </Flex>

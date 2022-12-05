@@ -6,30 +6,25 @@ import { Button, List, Row, Col } from 'antd'
 import ProjectPageItem from './MyProjectsItem'
 
 import PageLayout from '@/components/PageLayout'
-import { getProjectPagesState } from '@/reducers/myProjects'
 import Loader from '@/components/Loader'
-import config from '@/config'
-import { useActions } from '@/helpers/useActions'
+import { getProjectPagesState } from '@/reducers/myProjects'
+import { getProjectPagesByAccessToken, clearMyProjectsState, createProjectPage } from '@/actions'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT } from '@/constants'
-import { checkAccess, useUserIdentity } from '@/helpers'
+import { checkAccess, useUserIdentity, useActions } from '@/helpers'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
-    const token = localStorage.getItem('token')
-
-    const {
-        getProjectPagesByAccessToken, clearMyProjectsState,
+    const actions = useActions({
+        getProjectPagesByAccessToken,
+        clearMyProjectsState,
         createProjectPage,
-    } = useActions()
+    }, [])
+
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT]))
-            getProjectPagesByAccessToken()
-        return () => {
-            clearMyProjectsState()
-        }
+            actions.getProjectPagesByAccessToken()
+        return () => actions.clearMyProjectsState()
     }, [loginLoading])
-
-    const { projectPages, newProjectId, loading } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
         return <Redirect to={HOME_PAGE_ROUTE} />
@@ -37,9 +32,7 @@ export default () => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
-    if (newProjectId) {
-        window.location.replace(config.scratchURL + '?#' + newProjectId)
-    }
+    const { projectPages, loading } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
 
     return (
         <PageLayout>
@@ -51,7 +44,7 @@ export default () => {
                                 <Col span={24}>Мои проекты</Col>
                                 <Col span={24}>
                                     <Button
-                                        type='primary' onClick={() => createProjectPage(token)}>
+                                        type='primary' onClick={() => actions.createProjectPage()}>
                                         Создать новый
                                     </Button>
                                 </Col>

@@ -18,24 +18,28 @@ const ProfileCard = ({
         },
     }
     const [form] = Form.useForm()
-    const token = localStorage.getItem('token')
+
     return (
         <Flex margin='0.5rem' width='100%'>
             <Form
                 name='normal_profile'
                 className='profile-form'
                 onFinish={({ email, nickname, middlename, firstname, lastname }) => {
-                    updateHandle(token, {
-                        id: profile.id,
-                        email,
-                        middlename,
-                        firstname,
-                        lastname,
-                        nickname,
-                        password: profile.password,
-                        createdAt: profile.createdAt,
-                        role: profile.role,
-                    })
+                    updateHandle(
+                        {
+                            studentHttp: {
+                                userHttp: {
+                                    id: profile.id,
+                                    email,
+                                    middlename,
+                                    firstname,
+                                    lastname,
+                                    nickname,
+                                },
+                            },
+                        },
+                        profile.role,
+                    )
                 }}
                 {...layout}
                 form={form}
@@ -106,8 +110,8 @@ ProfileCard.propTypes = {
         middlename: PropTypes.string,
         role: PropTypes.number,
         createdAt: PropTypes.string,
-    }),
-    updateHandle: PropTypes.func,
+    }).isRequired,
+    updateHandle: PropTypes.func.isRequired,
 }
 
 export default ProfileCard

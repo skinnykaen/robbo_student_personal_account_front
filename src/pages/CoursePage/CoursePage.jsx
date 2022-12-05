@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect, useParams } from 'react-router-dom'
+import { Button } from 'antd'
 
 import { Title, Avatar, Description } from './components'
 
 import PageLayout from '@/components/PageLayout'
 import Flex from '@/components/Flex'
-import Button from '@/components/UI/Button'
 import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
-import { checkAccess, useUserIdentity, courseDescriptionParser } from '@/helpers'
-import { useActions } from '@/helpers/useActions'
+import { checkAccess, useUserIdentity, courseDescriptionParser, useActions } from '@/helpers'
+import { getCoursePageById, clearCoursePageState } from '@/actions'
 import {
     HOME_PAGE_ROUTE,
     LOGIN_PAGE_ROUTE,
@@ -24,14 +24,12 @@ export default () => {
 
     const token = localStorage.getItem('token')
     const { coursePageId } = useParams()
-    const { getCoursePageById, clearCoursePageState } = useActions()
+    const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN]))
-            getCoursePageById(token, coursePageId)
-        return () => {
-            clearCoursePageState()
-        }
+            actions.getCoursePageById(token, coursePageId)
+        return () => actions.clearCoursePageState()
     }, [loginLoading])
 
     const loading = useSelector(state => getCoursePageLoading(state.coursePage))
@@ -51,7 +49,6 @@ export default () => {
     return (
         <PageLayout>
             {
-                // TODO check correct work
                 loading || loginLoading
                     ? <Loader />
                     : (
@@ -61,27 +58,10 @@ export default () => {
                                 <Flex direction='column' margin='0 1rem 0 0'
                                     style={{ maxWidth: '250px' }}>
                                     <Avatar src={coursePage.media.image.large} />
-                                    <Button
-                                        content='Открыть курс'
-                                        background='darkgreen'
-                                        margin='1rem 0 0 0' padding='0.5rem'
-                                        handleSubmit={openCourseButtonHandler}
-                                    />
-                                    <Button
-                                        content='Прогресс'
-                                        background='darkgrey'
-                                        margin='1rem 0 0 0' padding='0.5rem'
-                                    />
-                                    <Button
-                                        content='Внешние источники'
-                                        background='darkgrey'
-                                        margin='1rem 0 0 0' padding='0.5rem'
-                                    />
-                                    <Button
-                                        content='Связь с преподавателем'
-                                        background='darkgrey'
-                                        margin='1rem 0 0 0' padding='0.5rem'
-                                    />
+                                    <Button onClick={openCourseButtonHandler}>Открыть курс</Button>
+                                    <Button>Прогресс</Button>
+                                    <Button>Внешние источники</Button>
+                                    <Button>Связь с преподавателем</Button>
                                 </Flex>
                                 <Flex direction='column'>
                                     <Flex direction='column'>

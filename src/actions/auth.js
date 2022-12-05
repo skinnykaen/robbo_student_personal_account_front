@@ -43,7 +43,7 @@ export const signUpSuccess = createAction(SIGN_UP_SUCCESS, response => {
 })
 
 export const signUpFailed = createAction(SIGN_UP_FAILED, error => {
-    toast.error(error)
+
     return {
         error,
     }
@@ -65,7 +65,6 @@ export const checkAuthSuccess = createAction(CHECK_AUTH_SUCCESS, response => {
     }
 })
 export const checkAuthFailed = createAction(CHECK_AUTH_FAILED, error => {
-    toast.error(error)
     return {
         error,
     }

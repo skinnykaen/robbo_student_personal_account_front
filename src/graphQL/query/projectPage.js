@@ -5,12 +5,23 @@ import { graphQLClient } from '@/graphQL'
 export const projectPageQueryGQL = {
     GET_PROJECT_PAGE_BY_STUDENT_ID: gql`
         query {
-            GetAllProjectPagesByAccessToken{
-                title
-                linkScratch
-                lastModified
-                projectId
-                projectPageId
+            GetAllProjectPagesByAccessToken { 
+                __typename
+                ... on ProjectPageHttp {
+                    title
+                }
+                ... on ProjectPageHttpList {
+                    projectPages{
+                        title
+                        linkScratch
+                        projectPageId
+                        projectId
+                        lastModified
+                    }
+                }
+                ... on Error {
+                    message
+                }
             }
         }
     `,
@@ -18,15 +29,21 @@ export const projectPageQueryGQL = {
     GET_PROJECT_PAGE_BY_ID: gql`
         query GetProjectPageById($projectPageID: String!){
             GetProjectPageById(projectPageID: $projectPageID){
-                projectPageId
-                lastModified
-                projectId
-                instruction
-                notes
-                preview
-                linkScratch
-                title
-                isShared
+                __typename
+                ... on ProjectPageHttp {
+                    projectPageId
+                    lastModified
+                    projectId
+                    instruction
+                    notes
+                    preview
+                    linkScratch
+                    title
+                    isShared
+                }
+                ... on Error {
+                    message
+                }
             }
         }
     `,

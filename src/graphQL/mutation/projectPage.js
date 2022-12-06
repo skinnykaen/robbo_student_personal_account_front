@@ -6,7 +6,13 @@ export const projectPageMutationGQL = {
     UPDATE_PROJECT_PAGE: gql`
     mutation UpdateProjectPage($input: UpdateProjectPage!) {
         UpdateProjectPage(input: $input) {
-            lastModified
+            __typename
+                ... on ProjectPageHttp {
+                    lastModified
+                }
+                ... on Error {
+                    message
+                }
         }
     }
     `,
@@ -14,11 +20,17 @@ export const projectPageMutationGQL = {
     CREATE_PROJECT_PAGE: gql`
     mutation {
         CreateProjectPage{
-            title
-            linkScratch
-            lastModified
-            projectId
-            projectPageId
+            __typename
+                ... on ProjectPageHttp {
+                    title
+                    linkScratch
+                    lastModified
+                    projectId
+                    projectPageId
+                }
+                ... on Error {
+                    message
+                }
         }
     }
     `,
@@ -50,7 +62,10 @@ export const projectPageMutationGraphQL = {
                     cache.modify({
                         fields: {
                             GetAllProjectPagesByAccessToken(existingProjectPages = []) {
-                                return [...existingProjectPages, CreateProjectPage]
+                                return {
+                                    ...existingProjectPages,
+                                    projectPages: [...existingProjectPages.projectPages, CreateProjectPage],
+                                }
                             },
                         },
                     })
@@ -68,7 +83,9 @@ export const projectPageMutationGraphQL = {
                     cache.modify({
                         fields: {
                             GetAllProjectPagesByAccessToken(existingProjectPages = []) {
-                                return existingProjectPages.filter(projectPage => projectPage.projectPageId !== DeleteProjectPage.projectPageId)
+                                const newProjectPages = [...existingProjectPages.projectPages]
+                                    .filter(projectPage => projectPage.projectPageId !== DeleteProjectPage.projectPageId)
+                                return { ...existingProjectPages, projectPages: newProjectPages }
                             },
                         },
                     })

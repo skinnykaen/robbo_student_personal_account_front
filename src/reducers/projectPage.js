@@ -13,6 +13,7 @@ import {
 const INITIAL_STATE = {
     projectPage: {},
     loading: true,
+    err: null,
 }
 
 export default handleActions({
@@ -31,8 +32,9 @@ export default handleActions({
     [updateProjectPageSuccess](state, { payload }) {
         return { ...state, loading: false, projectPage: { ...state.projectPage, ...payload.response } }
     },
-    [updateProjectPageFailed](state, action) {
-        return { ...state, loading: false }
+    [updateProjectPageFailed](state, { payload }) {
+        console.log(payload)
+        return { ...state, loading: false, err: payload }
     },
     [clearProjectPageState](state) {
         return INITIAL_STATE

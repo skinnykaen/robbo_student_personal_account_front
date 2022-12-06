@@ -14,11 +14,10 @@ function* signInSaga(action) {
         const response = yield call(authAPI.signIn, email, password, role)
         console.log(response)
         localStorage.setItem('token', response.data.accessToken)
-        console.log(response.headers)
         yield put(signInSucces(response))
     } catch (e) {
-        console.log(e.response)
-        yield put(signInFailed(e.response.data))
+        console.log(e)
+        yield put(signInFailed(e))
     }
 }
 

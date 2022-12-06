@@ -17,7 +17,8 @@ import {
     getProjectPageByAccessTokenSuccess,
     getProjectPageByAccessTokenFailed,
 } from '@/actions'
-import { projectPageQueryGraphQL, projectPageMutationGraphQL } from '@/graphQL'
+
+import { projectPageMutationGraphQL, projectPageQueryGraphQL } from '@/graphQL'
 
 function* getProjectPageByIdSaga(action) {
     try {
@@ -46,11 +47,10 @@ function* updateProjectPageSaga(action) {
     try {
         const { projectPage } = action.payload
         const response = yield call(projectPageMutationGraphQL.updateProjectPage, { input: projectPage })
-
         console.log(response)
         yield put(updateProjectPageSuccess(response.data.UpdateProjectPage))
     } catch (e) {
-        yield put(updateProjectPageFailed(e.message))
+        yield put(updateProjectPageFailed(e))
     }
 }
 
@@ -71,9 +71,9 @@ function* getProjectPagesByAccessTokenSaga(action) {
         const response = yield call(projectPageQueryGraphQL.getProjectPagesByAccessToken)
 
         console.log(response)
-        yield put(getProjectPageByAccessTokenSuccess(response.data.GetAllProjectPagesByAccessToken))
+        yield put(getProjectPageByAccessTokenSuccess(response.data.GetAllProjectPagesByAccessToken.projectPages))
     } catch (e) {
-        yield put(getProjectPageByAccessTokenFailed(e.message))
+        yield put(getProjectPageByAccessTokenFailed(e))
     }
 }
 

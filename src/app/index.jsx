@@ -1,6 +1,5 @@
 import React, { lazy, Suspense } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import { notification } from 'antd'
 
 import {
   HOME_PAGE_ROUTE,
@@ -23,10 +22,8 @@ const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const ProfilePage = lazy(() => import('@/pages/Profile'))
 
 export default () => {
-  const [, contextHolder] = notification.useNotification()
   return (
     <Suspense fallback={<Loader />}>
-      {contextHolder}
       <Switch>
         <Route
           exact

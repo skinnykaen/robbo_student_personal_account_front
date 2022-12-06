@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { Button, List, Row, Col } from 'antd'
+import { Button, List, Row, Col, notification } from 'antd'
 
 import ProjectPageItem from './MyProjectsItem'
 
@@ -10,7 +10,7 @@ import Loader from '@/components/Loader'
 import { getProjectPagesState } from '@/reducers/myProjects'
 import { getProjectPagesByAccessToken, clearMyProjectsState, createProjectPage } from '@/actions'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT } from '@/constants'
-import { checkAccess, useUserIdentity, useActions } from '@/helpers'
+import { checkAccess, useUserIdentity, useActions, openNotificationWithIcon } from '@/helpers'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
@@ -32,10 +32,14 @@ export default () => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
-    const { projectPages, loading } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
+    const { projectPages, loading, err } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
+    if (!loading && err !== null) {
+        notification.error({ message: 'Ошибка', description: err })
+    }
 
     return (
         <PageLayout>
+            {/* {contextHolder} */}
             {
                 loginLoading ? <Loader />
                     : (

@@ -9,18 +9,13 @@ const SignInForm = memo(({
     needSelectRole,
 }) => {
     const [form] = Form.useForm()
-    const [, forceUpdate] = useState({})
-
-    useEffect(() => {
-        forceUpdate({})
-    }, [])
-
+    console.log(handleSubmit)
     return (
         <Form
             name='normal_login'
             className='login-form'
             onFinish={({ email, password }) => {
-                return handleSubmit({ email, password }, 0)
+                return handleSubmit({ email, password, role: 0 })
             }}
             form={form}
         >

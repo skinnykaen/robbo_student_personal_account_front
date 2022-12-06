@@ -16,6 +16,7 @@ import {
 const INITIAL_STATE = {
     loading: true,
     projectPages: [],
+    err: null,
 }
 
 export default handleActions({
@@ -50,8 +51,8 @@ export default handleActions({
     [getProjectPageByAccessTokenSuccess](state, { payload }) {
         return { ...state, loading: false, projectPages: payload.response }
     },
-    [getProjectPageByAccessTokenFailed](state, action) {
-        return { ...state, loading: false }
+    [getProjectPageByAccessTokenFailed](state, { payload }) {
+        return { ...state, loading: false, err: payload.message }
     },
 }, INITIAL_STATE)
 

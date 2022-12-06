@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams, Redirect } from 'react-router-dom'
-import { Input, Button, Form, Switch } from 'antd'
+import { Input, Button, Form, Switch, notification } from 'antd'
 
 import { getProjectPageById, clearProjectPageState, updateProjectPage } from '@/actions'
-import { checkAccess, useUserIdentity, useActions } from '@/helpers'
+import { checkAccess, useUserIdentity, useActions, openNotificationWithIcon } from '@/helpers'
 import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import { getProjectPagesState } from '@/reducers/myProjects'
 import PageLayout from '@/components/PageLayout'
@@ -31,7 +31,9 @@ export default () => {
         return () => actions.clearProjectPageState()
     }, [loginLoading])
 
-    const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPagesState(projectPage))
+    const { projectPage, loading, err } = useSelector(({ projectPage }) => getProjectPagesState(projectPage))
+
+
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
         return <Redirect to={HOME_PAGE_ROUTE} />
@@ -39,12 +41,17 @@ export default () => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
-    const seeInsideHandler = () => {
-        window.location.replace(config.scratchURL + `?#${projectPageId}`)
+    const seeInsideHandler = () => { window.location.replace(config.scratchURL + `?#${projectPageId}`) }
+    const [api, contextHolder] = notification.useNotification()
+
+    if (err) {
+        // openNotificationWithIcon('error', 'Ошибка!', '', api)
+        console.log(err)
     }
 
     return (
         <PageLayout>
+            {contextHolder}
             {loading || loginLoading
                 ? <Loader />
                 : (
@@ -71,6 +78,7 @@ export default () => {
                                     notes: notes,
                                     isShared: projectPage.isShared,
                                 })
+                                openNotificationWithIcon('success', 'Успешно обновлено', '', api)
                             }}
                         >
                             <Form.Item

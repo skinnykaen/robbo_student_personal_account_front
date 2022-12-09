@@ -28,8 +28,8 @@ export default handleActions({
             ...state, loading: false, projectPages: [...state.projectPages, payload.response],
         }
     },
-    [createProjectPageFailed](state, action) {
-        return { ...state, loading: true }
+    [createProjectPageFailed](state, { payload }) {
+        return { ...state, loading: true, err: payload.message }
     },
     [deleteProjectPage](state, action) {
         return { ...state, loading: true }
@@ -39,8 +39,8 @@ export default handleActions({
         newProjectPages.splice(payload.projectPageIndex, 1)
         return { ...state, loading: false, projectPages: newProjectPages }
     },
-    [deleteProjectPageFailed](state, action) {
-        return { ...state, loading: false }
+    [deleteProjectPageFailed](state, { payload }) {
+        return { ...state, loading: true, err: payload.message }
     },
     [clearMyProjectsState](state, action) {
         return INITIAL_STATE

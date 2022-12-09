@@ -4,7 +4,7 @@ import { useParams, Redirect } from 'react-router-dom'
 import { Input, Button, Form, Switch, notification } from 'antd'
 
 import { getProjectPageById, clearProjectPageState, updateProjectPage } from '@/actions'
-import { checkAccess, useUserIdentity, useActions, openNotificationWithIcon } from '@/helpers'
+import { checkAccess, useUserIdentity, useActions } from '@/helpers'
 import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
 import { getProjectPagesState } from '@/reducers/myProjects'
 import PageLayout from '@/components/PageLayout'
@@ -42,16 +42,13 @@ export default () => {
     }
 
     const seeInsideHandler = () => { window.location.replace(config.scratchURL + `?#${projectPageId}`) }
-    const [api, contextHolder] = notification.useNotification()
 
-    if (err) {
-        // openNotificationWithIcon('error', 'Ошибка!', '', api)
-        console.log(err)
+    if (!loading && err !== null) {
+        notification.error({ message: 'Ошибка', description: err })
     }
 
     return (
         <PageLayout>
-            {contextHolder}
             {loading || loginLoading
                 ? <Loader />
                 : (
@@ -78,7 +75,6 @@ export default () => {
                                     notes: notes,
                                     isShared: projectPage.isShared,
                                 })
-                                openNotificationWithIcon('success', 'Успешно обновлено', '', api)
                             }}
                         >
                             <Form.Item

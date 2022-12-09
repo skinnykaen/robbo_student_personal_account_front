@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client"
 
-import { graphQLClient } from "@/graphQL"
+import { graphQLClient, projectPageQueryGQL } from "@/graphQL"
 
 export const projectPageMutationGQL = {
     UPDATE_PROJECT_PAGE: gql`
@@ -8,7 +8,15 @@ export const projectPageMutationGQL = {
         UpdateProjectPage(input: $input) {
             __typename
                 ... on ProjectPageHttp {
+                    projectPageId
                     lastModified
+                    projectId
+                    instruction
+                    notes
+                    preview
+                    linkScratch
+                    title
+                    isShared
                 }
                 ... on Error {
                     message
@@ -50,6 +58,19 @@ export const projectPageMutationGraphQL = {
             {
                 mutation: projectPageMutationGQL.UPDATE_PROJECT_PAGE,
                 variables: input,
+                update(cache, { data: { UpdateProjectPage } }) {
+                    cache.modify({
+                        fields: {
+                            GetProjectPageById(existingProjectPage = {}) {
+                                return { ...existingProjectPage, ...UpdateProjectPage }
+                            },
+                        },
+                    })
+                },
+                refetchQueries: [
+                    { query: projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN },
+                    'GetAllProjectPagesByAccessToken',
+                ],
             },
         )
     },

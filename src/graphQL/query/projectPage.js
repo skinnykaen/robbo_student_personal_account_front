@@ -3,13 +3,10 @@ import { gql } from '@apollo/client'
 import { graphQLClient } from '@/graphQL'
 
 export const projectPageQueryGQL = {
-    GET_PROJECT_PAGE_BY_STUDENT_ID: gql`
+    GET_PROJECT_PAGES_BY_ACCESS_TOKEN: gql`
         query {
             GetAllProjectPagesByAccessToken { 
                 __typename
-                ... on ProjectPageHttp {
-                    title
-                }
                 ... on ProjectPageHttpList {
                     projectPages{
                         title
@@ -53,7 +50,7 @@ export const projectPageQueryGraphQL = {
     getProjectPagesByAccessToken() {
         return graphQLClient.query(
             {
-                query: projectPageQueryGQL.GET_PROJECT_PAGE_BY_STUDENT_ID,
+                query: projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN,
             },
         )
     },

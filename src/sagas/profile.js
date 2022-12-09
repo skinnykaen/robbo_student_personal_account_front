@@ -1,4 +1,5 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
+import { notification } from 'antd'
 
 import {
     getProfileById,
@@ -17,7 +18,8 @@ function* getProfileByIdSaga(action) {
 
         yield put(getProfileByIdSuccess(response.data.GetStudentByAccessToken.userHttp))
     } catch (e) {
-        yield put(getProfileByIdFailed(e.message))
+        yield put(getProfileByIdFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
@@ -28,8 +30,10 @@ function* updateProfileSaga(action) {
         console.log(response)
 
         yield put(updateProfileSuccess(response.data.UpdateStudent.userHttp))
+        notification.success({ message: 'Успешно обновлено!' })
     } catch (e) {
         yield put(updateProfileFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 

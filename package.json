@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "dev": "webpack-dev-server --open --config webpack.dev.js",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "eslint:test": "eslint src --ext .js,.jsx",
     "eslint:fix": "eslint --fix src --ext .js,.jsx",

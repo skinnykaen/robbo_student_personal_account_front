@@ -6,12 +6,17 @@ export const userMutationGQL = {
     UPDATE_STUDENT: gql`
     mutation UpdateStudent($input: UpdateStudentInput!) {
         UpdateStudent(input: $input){
+            ... on StudentHttp{
             userHttp{
                 email
                 nickname
                 lastname
                 firstname
                 middlename
+            }
+            }
+            ... on Error{
+                message
             }
         }
     }
@@ -35,8 +40,8 @@ export const userMutationGraphQL = {
                 update(cache, { data: { UpdateStudent } }) {
                     cache.modify({
                         fields: {
-                            GetStudentByAccessToken(existingStudent = {}) {
-                                return { ...existingStudent, ...existingStudent.userHttp }
+                            GetStudentByAccessToken(existingStudent) {
+                                return { ...existingStudent, ...UpdateStudent }
                             },
                         },
                     })

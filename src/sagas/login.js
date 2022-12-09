@@ -1,4 +1,5 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+import { notification } from 'antd'
 
 import { authAPI } from '@/api'
 import {
@@ -16,8 +17,8 @@ function* signInSaga(action) {
         localStorage.setItem('token', response.data.accessToken)
         yield put(signInSucces(response))
     } catch (e) {
-        console.log(e)
         yield put(signInFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
@@ -29,8 +30,8 @@ function* signUpSaga(action) {
         localStorage.setItem('token', response.data.accessToken)
         yield put(signUpSuccess(response))
     } catch (e) {
-        console.log(e.response)
         yield put(signUpFailed(e.response.data))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
@@ -41,8 +42,8 @@ function* signOutSaga(action) {
         console.log(response)
         yield put(signOutSuccess())
     } catch (e) {
-        console.log(e.response)
         yield put(signOutFailed(e.message))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
@@ -53,8 +54,8 @@ function* checkAuthSaga(action) {
         console.log(response)
         yield put(checkAuthSuccess(response))
     } catch (e) {
-        console.log(e.response)
         yield put(checkAuthFailed(e?.message))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 

@@ -1,6 +1,7 @@
 import React, { useEffect, memo } from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
+import { notification } from 'antd'
 
 import PageLayout from '@/components/PageLayout'
 import Loader from '@/components/Loader'
@@ -33,7 +34,11 @@ export default memo(() => {
 
     }, [loginLoading])
 
-    const { loading, profile } = useSelector(({ profile }) => getProfileState(profile))
+    const { loading, profile, err } = useSelector(({ profile }) => getProfileState(profile))
+    if (!loading && err !== null) {
+        notification.error({ message: 'Ошибка', description: err })
+    }
+
     return (
         <PageLayout>
             Profile

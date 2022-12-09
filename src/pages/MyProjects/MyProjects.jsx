@@ -10,7 +10,7 @@ import Loader from '@/components/Loader'
 import { getProjectPagesState } from '@/reducers/myProjects'
 import { getProjectPagesByAccessToken, clearMyProjectsState, createProjectPage } from '@/actions'
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT } from '@/constants'
-import { checkAccess, useUserIdentity, useActions, openNotificationWithIcon } from '@/helpers'
+import { checkAccess, useUserIdentity, useActions } from '@/helpers'
 
 export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
@@ -32,16 +32,12 @@ export default () => {
         return <Redirect to={LOGIN_PAGE_ROUTE} />
     }
 
-    const { projectPages, loading, err } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
-    if (!loading && err !== null) {
-        notification.error({ message: 'Ошибка', description: err })
-    }
+    const { projectPages, loading } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
 
     return (
         <PageLayout>
-            {/* {contextHolder} */}
             {
-                loginLoading ? <Loader />
+                loginLoading || loading ? <Loader />
                     : (
                         <React.Fragment>
                             <Row style={{ margin: '0.5rem' }}>

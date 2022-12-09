@@ -1,4 +1,5 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
+import { notification } from 'antd'
 
 import {
     createProjectPage,
@@ -28,7 +29,8 @@ function* getProjectPageByIdSaga(action) {
         console.log(response)
         yield put(getProjectPageByIdSuccess(response.data.GetProjectPageById))
     } catch (e) {
-        yield put(getProjectPageByIdFailed(e.message))
+        yield put(getProjectPageByIdFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
@@ -38,8 +40,10 @@ function* createProjectPageSaga(action) {
 
         console.log(response)
         yield put(createProjectPageSuccess(response.data.CreateProjectPage))
+        notification.success({ message: 'Успешно создано!', description: '' })
     } catch (e) {
-        yield put(createProjectPageFailed(e.message))
+        yield put(createProjectPageFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
@@ -49,8 +53,10 @@ function* updateProjectPageSaga(action) {
         const response = yield call(projectPageMutationGraphQL.updateProjectPage, { input: projectPage })
         console.log(response)
         yield put(updateProjectPageSuccess(response.data.UpdateProjectPage))
+        notification.success({ message: 'Успешно обновлено!', description: '' })
     } catch (e) {
         yield put(updateProjectPageFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
@@ -61,8 +67,10 @@ function* deleteProjectPageSaga(action) {
 
         console.log(response)
         yield put(deleteProjectPageSuccess(projectPageIndex))
+        notification.success({ message: 'Успешно удалено!', description: '' })
     } catch (e) {
-        yield put(deleteProjectPageFailed(e.message))
+        yield put(deleteProjectPageFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
@@ -74,6 +82,7 @@ function* getProjectPagesByAccessTokenSaga(action) {
         yield put(getProjectPageByAccessTokenSuccess(response.data.GetAllProjectPagesByAccessToken.projectPages))
     } catch (e) {
         yield put(getProjectPageByAccessTokenFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 

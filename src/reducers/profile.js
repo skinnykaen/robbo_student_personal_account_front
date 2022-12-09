@@ -13,6 +13,7 @@ import {
 const INITIAL_STATE = {
     profile: {},
     loading: true,
+    err: null,
 }
 
 export default handleActions({
@@ -28,17 +29,19 @@ export default handleActions({
             ...state, loading: false, profile: payload.response,
         }
     },
-    [getProfileByIdFailed](state, action) {
-        return { ...state, loading: false }
+    [getProfileByIdFailed](state, { payload }) {
+        return { ...state, loading: true, err: payload.message }
     },
     [updateProfile](state, action) {
         return { ...state, loading: true }
     },
     [updateProfileSuccess](state, { payload }) {
-        return { ...state, loading: false, profile: { ...state.profile, ...payload.response } }
+        return {
+            ...state, loading: false, profile: { ...state.profile, ...payload.response },
+        }
     },
-    [updateProfileFailed](state, action) {
-        return { ...state, loading: false }
+    [updateProfileFailed](state, { payload }) {
+        return { ...state, loading: true, err: payload.message }
     },
 }, INITIAL_STATE)
 

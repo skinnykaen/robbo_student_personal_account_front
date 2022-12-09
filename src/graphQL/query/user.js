@@ -6,31 +6,41 @@ export const usersGQL = {
     GET_STUDENT_BY_ID: gql`
     query GetStudentById($studentId: String!){
         GetStudentById(studentId: $studentId){
-            userHttp{
-                id
-                lastname
-                firstname
-                middlename
-                nickname
-                email
-                createdAt
-                role
+            ... on StudentHttp{
+                userHttp{
+                    id
+                    lastname
+                    firstname
+                    middlename
+                    nickname
+                    email
+                    createdAt
+                    role
+                }
+            }
+            ... on Error{
+                message
             }
         }
     }`,
 
     GET_STUDENT_BY_ACCESS_TOKEN: gql`
-    query {
+    query GetStudentByAccessToken{
         GetStudentByAccessToken{
-            userHttp{
-                id
-                lastname
-                firstname
-                middlename
-                nickname
-                email
-                createdAt
-                role
+            ... on StudentHttp{
+                userHttp{
+                    id
+                    lastname
+                    firstname
+                    middlename
+                    nickname
+                    email
+                    createdAt
+                    role
+                }
+            }
+            ... on Error{
+                message
             }
         }
     }`,

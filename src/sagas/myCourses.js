@@ -1,4 +1,5 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
+import { notification } from 'antd'
 
 import { coursePageAPI } from '@/api'
 import {
@@ -16,6 +17,7 @@ function* getAllCoursePagesSaga(action) {
         yield put(getAllCoursePagesSuccess(response.data.results))
     } catch (e) {
         yield put(getAllCoursePagesFailed(e.message))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
@@ -29,6 +31,7 @@ function* getCoursePageByIdSaga(action) {
         yield put(getCoursePageByIdSuccess(response.data))
     } catch (e) {
         yield put(getCoursePageByIdFailed(e.message))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 

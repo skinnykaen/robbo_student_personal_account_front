@@ -48,11 +48,11 @@ export const projectPageQueryGQL = {
 }
 
 export const projectPageQueryGraphQL = {
-    getProjectPagesByAccessToken() {
+    getProjectPagesByAccessToken({ page, pageSize }) {
         return graphQLClient.query(
             {
                 query: projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN,
-                variables: { page: "1", pageSize: "4" },
+                variables: { page, pageSize: "4" },
             },
         )
     },

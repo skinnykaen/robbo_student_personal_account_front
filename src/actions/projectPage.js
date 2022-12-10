@@ -36,7 +36,7 @@ export const deleteProjectPage = createAction(DELETE_PROJECT_PAGE, (projectPageI
 export const deleteProjectPageSuccess = createAction(DELETE_PROJECT_PAGE_SUCCESS, projectPageIndex => ({ projectPageIndex }))
 export const deleteProjectPageFailed = createAction(DELETE_PROJECT_PAGE_FAILED, err => err)
 
-export const getProjectPagesByAccessToken = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN)
+export const getProjectPagesByAccessToken = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN, page => ({ page }))
 export const getProjectPageByAccessTokenSuccess = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN_SUCCESS, response => ({ response }))
 export const getProjectPageByAccessTokenFailed = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN_FAILED, err => err)
 

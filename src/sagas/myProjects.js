@@ -74,9 +74,9 @@ function* deleteProjectPageSaga(action) {
     }
 }
 
-function* getProjectPagesByAccessTokenSaga(action) {
+function* getProjectPagesByAccessTokenSaga({ payload }) {
     try {
-        const response = yield call(projectPageQueryGraphQL.getProjectPagesByAccessToken)
+        const response = yield call(projectPageQueryGraphQL.getProjectPagesByAccessToken, { page: payload.page })
 
         console.log(response)
         yield put(getProjectPageByAccessTokenSuccess(response.data.GetAllProjectPagesByAccessToken))

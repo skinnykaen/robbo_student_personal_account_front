@@ -12,10 +12,10 @@ import { getProjectPagesByAccessToken, clearMyProjectsState, createProjectPage }
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT } from '@/constants'
 import { checkAccess, useUserIdentity, useActions } from '@/helpers'
 
-export default ({ match }) => {
+export default () => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
-    const params = useSearchParams()
-    console.log(match)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const currentPage = searchParams.get('page') || '1'
     const actions = useActions({
         getProjectPagesByAccessToken,
         clearMyProjectsState,
@@ -24,9 +24,9 @@ export default ({ match }) => {
 
     useEffect(() => {
         if (!loginLoading && checkAccess(userRole, [STUDENT]))
-            actions.getProjectPagesByAccessToken()
+            actions.getProjectPagesByAccessToken(currentPage)
         return () => actions.clearMyProjectsState()
-    }, [loginLoading])
+    }, [loginLoading, currentPage])
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
         return redirect(HOME_PAGE_ROUTE)
@@ -72,8 +72,10 @@ export default ({ match }) => {
                                 <Col span={24}>
                                     <Pagination
                                         defaultCurrent={1} defaultPageSize={4}
-                                        total={countRows}
-                                        onChange={(page, pageSize) => { console.log(page, pageSize) }}
+                                        total={countRows} current={+currentPage}
+                                        onChange={(page, pageSize) => {
+                                            setSearchParams({ page })
+                                        }}
                                     />
                                 </Col>
                             </Row>

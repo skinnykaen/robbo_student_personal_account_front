@@ -4,8 +4,8 @@ import { graphQLClient } from '@/graphQL'
 
 export const projectPageQueryGQL = {
     GET_PROJECT_PAGES_BY_ACCESS_TOKEN: gql`
-        query {
-            GetAllProjectPagesByAccessToken { 
+        query GetAllProjectPagesByAccessToken($page: String!, $pageSize: String!){
+            GetAllProjectPagesByAccessToken(page: $page, pageSize: $pageSize){ 
                 __typename
                 ... on ProjectPageHttpList {
                     projectPages{
@@ -15,6 +15,7 @@ export const projectPageQueryGQL = {
                         projectId
                         lastModified
                     }
+                    countRows
                 }
                 ... on Error {
                     message
@@ -51,6 +52,7 @@ export const projectPageQueryGraphQL = {
         return graphQLClient.query(
             {
                 query: projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN,
+                variables: { page: "1", pageSize: "4" },
             },
         )
     },

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Button, Space, Modal } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
@@ -15,10 +15,10 @@ const { confirm } = Modal
 export default ({ projectPageIndex, projectPage }) => {
 
     const action = useActions({ deleteProjectPage }, [])
-    const history = useHistory()
+    const history = useNavigate()
 
     const toProjectPageHandler = () => {
-        history.push(`/projects/${projectPage.projectPageId}`)
+        history(`/projects/${projectPage.projectPageId}`)
     }
 
     const seeInsideHandler = () => {

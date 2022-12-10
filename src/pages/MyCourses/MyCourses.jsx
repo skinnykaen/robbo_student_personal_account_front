@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Redirect } from 'react-router-dom'
+import { redirect } from 'react-router-dom'
 
 import { WelcomeText } from './components'
 import CoursePageItem from './MyCoursesItem'
@@ -28,9 +28,9 @@ export default () => {
     const loading = useSelector(({ myCourses }) => getCoursePagesLoading(myCourses))
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT, SUPER_ADMIN])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+        return redirect(HOME_PAGE_ROUTE)
     } else if (!isAuth && !loginLoading) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
+        return redirect(LOGIN_PAGE_ROUTE)
     }
 
     return (

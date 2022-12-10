@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 import {
   HOME_PAGE_ROUTE,
@@ -24,44 +24,39 @@ const ProfilePage = lazy(() => import('@/pages/Profile'))
 export default () => {
   return (
     <Suspense fallback={<Loader />}>
-      <Switch>
+      <Routes>
         <Route
-          exact
           path={HOME_PAGE_ROUTE}
-          component={HomePage}
+          element={<HomePage />}
         />
         <Route
-          exact
           path={LOGIN_PAGE_ROUTE}
-          component={LoginPage}
+          element={<LoginPage />}
         />
         <Route
-          exact
           path={MY_PROJECTS_ROUTE}
-          component={MyProjects}
+          element={<MyProjects />}
         />
         <Route
-          exact
           path={PROJECT_PAGE_ROUTE}
-          component={ProjectPage}
+          element={<ProjectPage />}
         />
         <Route
-          exact
           path={MY_COURSES_ROUTE}
-          component={MyCourses}
+          element={<MyCourses />}
         />
         <Route
-          exact
           path={COURSE_PAGE_ROUTE}
-          component={CoursePage}
+          element={<CoursePage />}
         />
         <Route
-          exact
           path={PROFILE_PAGE_ROUTE}
-          component={ProfilePage}
+          element={<ProfilePage />}
         />
-        <Redirect from='/' to={HOME_PAGE_ROUTE} />
-      </Switch>
+        <Route
+          path='/'
+          element={<Navigate to={HOME_PAGE_ROUTE} replace />} />
+      </Routes>
     </Suspense>
   )
 }

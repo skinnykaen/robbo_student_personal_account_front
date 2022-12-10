@@ -16,6 +16,7 @@ import {
 const INITIAL_STATE = {
     loading: true,
     projectPages: [],
+    countRows: 0,
     err: null,
 }
 
@@ -49,7 +50,12 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [getProjectPageByAccessTokenSuccess](state, { payload }) {
-        return { ...state, loading: false, projectPages: payload.response }
+        return {
+            ...state,
+            loading: false,
+            projectPages: payload.response.projectPages,
+            countRows: payload.response.countRows,
+        }
     },
     [getProjectPageByAccessTokenFailed](state, { payload }) {
         return { ...state, loading: false, err: payload.message }

@@ -79,7 +79,7 @@ function* getProjectPagesByAccessTokenSaga(action) {
         const response = yield call(projectPageQueryGraphQL.getProjectPagesByAccessToken)
 
         console.log(response)
-        yield put(getProjectPageByAccessTokenSuccess(response.data.GetAllProjectPagesByAccessToken.projectPages))
+        yield put(getProjectPageByAccessTokenSuccess(response.data.GetAllProjectPagesByAccessToken))
     } catch (e) {
         yield put(getProjectPageByAccessTokenFailed(e))
         notification.error({ message: 'Ошибка', description: e.message })

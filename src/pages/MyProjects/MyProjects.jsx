@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { Redirect } from 'react-router-dom'
-import { Button, List, Row, Col, notification } from 'antd'
+import { redirect, useSearchParams } from 'react-router-dom'
+import { Button, List, Row, Col, Pagination } from 'antd'
 
 import ProjectPageItem from './MyProjectsItem'
 
@@ -12,8 +12,10 @@ import { getProjectPagesByAccessToken, clearMyProjectsState, createProjectPage }
 import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT } from '@/constants'
 import { checkAccess, useUserIdentity, useActions } from '@/helpers'
 
-export default () => {
+export default ({ match }) => {
     const { userRole, isAuth, loginLoading } = useUserIdentity()
+    const params = useSearchParams()
+    console.log(match)
     const actions = useActions({
         getProjectPagesByAccessToken,
         clearMyProjectsState,
@@ -27,12 +29,12 @@ export default () => {
     }, [loginLoading])
 
     if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
-        return <Redirect to={HOME_PAGE_ROUTE} />
+        return redirect(HOME_PAGE_ROUTE)
     } else if (!isAuth && !loginLoading) {
-        return <Redirect to={LOGIN_PAGE_ROUTE} />
+        return redirect(LOGIN_PAGE_ROUTE)
     }
 
-    const { projectPages, loading } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
+    const { projectPages, countRows, loading } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
 
     return (
         <PageLayout>
@@ -66,6 +68,13 @@ export default () => {
                                                 )}
                                             />
                                     }
+                                </Col>
+                                <Col span={24}>
+                                    <Pagination
+                                        defaultCurrent={1} defaultPageSize={4}
+                                        total={countRows}
+                                        onChange={(page, pageSize) => { console.log(page, pageSize) }}
+                                    />
                                 </Col>
                             </Row>
                         </React.Fragment>

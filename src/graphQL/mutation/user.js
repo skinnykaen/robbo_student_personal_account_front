@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client"
 
-import { graphQLClient } from "@/graphQL"
+import { graphQLClient, userQuerysGQL } from "@/graphQL"
 import { FREE_LISTENER, PARENT, STUDENT, SUPER_ADMIN, TEACHER, UNIT_ADMIN } from "@/constants"
 
 export const userMutationsGQL = {
@@ -236,6 +236,18 @@ export const usersMutationGraphQL = {
             {
                 mutation: userMutationsGQL.CREATE_PARENT,
                 variables: input,
+                update(cache, { data: { CreateParent } }) {
+                    cache.modify({
+                        fields: {
+                            GetAllParents(existingParents = []) {
+                                return {
+                                    ...existingParents,
+                                    parents: [...existingParents.parents, CreateParent],
+                                }
+                            },
+                        },
+                    })
+                },
             },
         )
     },
@@ -245,12 +257,25 @@ export const usersMutationGraphQL = {
             {
                 mutation: userMutationsGQL.DELETE_PARENT,
                 variables: parentId,
+                update(cache, { data: { DeleteParent } }) {
+                    cache.modify({
+                        fields: {
+                            GetAllParents(existingParents = []) {
+                                const newParents = [...existingParents.parents]
+                                    .filter(parent => parent.id !== DeleteParent.parentId)
+                                return { ...existingParents, parents: newParents }
+                            },
+                        },
+                    })
+                },
             },
         )
     },
 
     updateProfile(input, role) {
         let gqlString = null
+        let update = {}
+        let refetchQueries = null
         switch (role) {
             case STUDENT:
                 gqlString = userMutationsGQL.UPDATE_STUDENT
@@ -260,6 +285,20 @@ export const usersMutationGraphQL = {
                 break
             case PARENT:
                 gqlString = userMutationsGQL.UPDATE_PARENT
+                update = {
+                    update(cache, { data: { UpdateParent } }) {
+                        cache.modify({
+                            fields: {
+                                GetParentById(existingParent = {}) {
+                                    return { ...existingParent, ...UpdateParent }
+                                },
+                            },
+                        })
+                    },
+                }
+                refetchQueries = [
+                    { query: userQuerysGQL.GET_ALL_PARENTS },
+                ]
                 break
             case FREE_LISTENER:
                 gqlString = userMutationsGQL.UPDATE_FREE_LISTENER
@@ -278,6 +317,8 @@ export const usersMutationGraphQL = {
             {
                 mutation: gqlString,
                 variables: input,
+                ...update,
+                refetchQueries: refetchQueries,
             },
         )
     },

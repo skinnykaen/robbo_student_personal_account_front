@@ -21,12 +21,12 @@ export default ({ unitAdminId }) => {
                     ? <Loader />
                     : <List
                         bordered
-                        dataSource={data?.GetRobboUnitsByUnitAdminId?.robboUnits}
-                        renderItem={({ robboUnitHttp }, index) => (
+                        dataSource={data.GetRobboUnitsByUnitAdminId?.robboUnits}
+                        renderItem={({ name }, index) => (
                             <ListItem
                                 itemIndex={index}
                                 key={index}
-                                label={`${robboUnitHttp.name}`}
+                                label={`${name}`}
                                 render={() => { }}
                             />
                         )}

@@ -24,9 +24,9 @@ export const robboUnitGQL = {
     `,
 
     SEARCH_UNIT_ADMINS_BY_EMAIL: gql`
-        query SearchUnitAdminsByEmail($email: String!){
-            SearchUnitAdminsByEmail(email: $email){
-                ... on UnitAdminsHttpList{
+        query SearchUnitAdminsByEmail($email: String!, $robboUnitId: String!){
+            SearchUnitAdminsByEmail(email: $email, robboUnitId: $robboUnitId){
+                ... on UnitAdminHttpList{
                     unitAdmins {
                         userHttp{
                             id
@@ -101,11 +101,14 @@ export const robboUnitQueryGraphQL = {
         )
     },
 
-    SearchUnitAdminByEmail(email) {
+    SearchUnitAdminByEmail(email, robboUnitId) {
         return graphQLClient.query(
             {
                 query: robboUnitGQL.SEARCH_UNIT_ADMINS_BY_EMAIL,
-                variables: email,
+                variables: {
+                    email,
+                    robboUnitId,
+                },
             },
         )
     },

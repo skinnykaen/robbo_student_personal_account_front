@@ -53,6 +53,7 @@ export default () => {
     }, [loginLoading])
 
     const { robboGroups, loading } = useSelector(({ robboGroups }) => getRobboGroupsState(robboGroups))
+    console.log(robboGroups)
 
     if (!loginLoading && !checkAccess(userRole, [SUPER_ADMIN, UNIT_ADMIN])) {
         return <Navigate to={HOME_PAGE_ROUTE} />
@@ -94,7 +95,7 @@ export default () => {
                                             {/* TODO refactor list from antd */}
                                             <Flex direction='column'>
                                                 {
-                                                    robboGroups?.map((robboGroup, index) => {
+                                                    robboGroups?.robboGroups.map((robboGroup, index) => {
                                                         return (
                                                             <ListItem
                                                                 itemIndex={index}

@@ -25,8 +25,9 @@ export default ({ robboUnitId }) => {
     const [openSearchSection, setOpenSearchSection] = useState(false)
 
     const SearchUnitAdmins = async value => {
-        const result = await robboUnitQueryGraphQL.SearchUnitAdminByEmail({ email: value })
-        setSearchResult(result.data.SearchUnitAdminsByEmail)
+        const result = await robboUnitQueryGraphQL.SearchUnitAdminByEmail(value, robboUnitId)
+        console.log(result)
+        setSearchResult(result.data.SearchUnitAdminsByEmail.unitAdmins)
     }
 
     const getUnitAdminsByRobboUnitIdResult = useQuery(robboUnitGQL.GET_UNIT_ADMINS_BY_ROBBO_UNIT_ID, {

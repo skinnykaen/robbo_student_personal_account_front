@@ -68,7 +68,10 @@ export const projectPageMutationGraphQL = {
                     })
                 },
                 refetchQueries: [
-                    { query: projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN },
+                    {
+                        query: projectPageQueryGQL.GET_PROJECT_PAGES_BY_ACCESS_TOKEN,
+                        variables: { page: "1", pageSize: "10" },
+                    },
                     'GetAllProjectPagesByAccessToken',
                 ],
             },

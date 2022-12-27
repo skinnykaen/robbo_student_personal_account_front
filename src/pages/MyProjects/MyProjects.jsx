@@ -71,7 +71,7 @@ export default () => {
                                 </Col>
                                 <Col span={24}>
                                     <Pagination
-                                        defaultCurrent={1} defaultPageSize={4}
+                                        defaultCurrent={1} defaultPageSize={10}
                                         total={countRows} current={+currentPage}
                                         onChange={(page, pageSize) => {
                                             setSearchParams({ page })

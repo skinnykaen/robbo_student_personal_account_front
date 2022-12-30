@@ -31,6 +31,9 @@ import {
     searchRobboGroupsByTitleRequest,
     searchRobboGroupsByTitleSuccess,
     getAllRobboGroupsRequest,
+    getAllRobboGroupsForUnitAdminRequest,
+    getAllRobboGroupsForUnitAdminSuccess,
+    getAllRobboGroupsForUnitAdminFailed,
 } from '@/actions'
 import { robboGroupsQueryGraphQL } from '@/graphQL/query'
 
@@ -154,6 +157,18 @@ function* getAllRobboGroupsSaga({ payload }) {
     }
 }
 
+function* getAllRobboGroupsForUnitAdminSaga({ payload }) {
+    try {
+        const { page, pageSize } = payload
+        const response = yield call(robboGroupsQueryGraphQL.getAllRobboGroupsForUnitAdmin, page, pageSize)
+        console.log(response)
+
+        yield put(getAllRobboGroupsForUnitAdminSuccess(response.data.GetAllRobboGroupsForUnitAdmin.robboGroups))
+    } catch (e) {
+        yield put(getAllRobboGroupsForUnitAdminFailed(e))
+    }
+}
+
 export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupByIdRequest, getRobboGroupByIdSaga)
     yield takeLatest(deleteRobboGroupRequest, deleteRobboGroupSaga)
@@ -165,4 +180,5 @@ export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupsByTeacherId, getRobboGroupsByTeacherIdSaga)
     yield takeLatest(getRobboGroupsByAccessToken, getRobboGroupsByAccessTokenSaga)
     yield takeLatest(getAllRobboGroupsRequest, getAllRobboGroupsSaga)
+    yield takeLatest(getAllRobboGroupsForUnitAdminRequest, getAllRobboGroupsForUnitAdminSaga)
 }

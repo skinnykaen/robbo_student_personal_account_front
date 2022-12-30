@@ -33,6 +33,9 @@ import {
     GET_ALL_ROBBO_GROUPS,
     GET_ALL_ROBBO_GROUPS_SUCCESS,
     GET_ALL_ROBBO_GROUPS_FAILED,
+    GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN,
+    GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN_SUCCESS,
+    GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN_FAILED,
     UPDATE_ROBBO_GROUP,
     UPDATE_ROBBO_GROUP_SUCCESS,
     UPDATE_ROBBO_GROUP_FAILED,
@@ -238,6 +241,10 @@ export const getRobboGroupsByAccessTokenFailed = createAction(GET_ROBBO_GROUPS_B
 export const getAllRobboGroupsRequest = createAction(GET_ALL_ROBBO_GROUPS, (page, pageSize) => ({ page, pageSize }))
 export const getAllRobboGroupsSuccess = createAction(GET_ALL_ROBBO_GROUPS_SUCCESS, response => ({ response }))
 export const getAllRobboGroupsFailed = createAction(GET_ALL_ROBBO_GROUPS_FAILED, err => ({ err }))
+
+export const getAllRobboGroupsForUnitAdminRequest = createAction(GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN, (page, pageSize) => ({ page, pageSize }))
+export const getAllRobboGroupsForUnitAdminSuccess = createAction(GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN_SUCCESS, response => ({ response }))
+export const getAllRobboGroupsForUnitAdminFailed = createAction(GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN_FAILED, err => ({ err }))
 
 export const updateRobboGroup = createAction(UPDATE_ROBBO_GROUP, robboGroup => robboGroup)
 export const updateRobboGroupSuccess = createAction(UPDATE_ROBBO_GROUP_SUCCESS, response => response)

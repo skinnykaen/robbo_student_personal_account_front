@@ -262,7 +262,7 @@ export const usersMutationGraphQL = {
                         fields: {
                             GetAllParents(existingParents = []) {
                                 const newParents = [...existingParents.parents]
-                                    .filter(parent => parent.id !== DeleteParent.parentId)
+                                    .filter(parent => parent.userHttp.id !== DeleteParent.parentId)
                                 return { ...existingParents, parents: newParents }
                             },
                         },
@@ -274,7 +274,7 @@ export const usersMutationGraphQL = {
 
     updateProfile(input, role) {
         let update = {}
-        let refetchQueries = null
+        const refetchQueries = null
         let gqlString = null
         switch (role) {
             case STUDENT:
@@ -289,16 +289,27 @@ export const usersMutationGraphQL = {
                     update(cache, { data: { UpdateParent } }) {
                         cache.modify({
                             fields: {
-                                GetParentById(existingParent = {}) {
-                                    return { ...existingParent, ...UpdateParent }
+                                GetAllParents(existingParents = []) {
+                                    console.log(existingParents)
+                                    const newParents = [...existingParents.parents]
+                                        .filter(parent => parent.userHttp.id !== UpdateParent.userHttp.id)
+                                    newParents.push(UpdateParent)
+                                    console.log(newParents)
+                                    return { ...existingParents, parents: newParents }
                                 },
                             },
                         })
                     },
                 }
-                refetchQueries = [
-                    { query: parentQuerysGQL.GET_ALL_PARENTS },
-                ]
+                // refetchQueries = [
+                //     {
+                //         query: parentQuerysGQL.GET_ALL_PARENTS,
+                //         variables: {
+                //             page: "1",
+                //             pageSize: "10",
+                //         }
+                //     },
+                // ]
                 break
             case FREE_LISTENER:
                 gqlString = userMutationsGQL.UPDATE_FREE_LISTENER

@@ -68,6 +68,24 @@ export const robboGroupGQL = {
     }     
     `,
 
+    GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN: gql`
+    query GetAllRobboGroupsForUnitAdmin($page: String!, $pageSize: String!){
+        GetAllRobboGroupsForUnitAdmin(page: $page, pageSize: $pageSize){
+            ... on RobboGroupHttpList {
+                robboGroups {
+                    id
+                    name
+                    robboUnitId
+                    lastModified
+                }
+            }
+            ... on Error {
+                message
+            }
+        }
+    }     
+    `,
+
     GET_ROBBO_GROUPS_BY_ACCESS_TOKEN: gql`
         query {
             GetRobboGroupsByAccessToken{
@@ -93,6 +111,15 @@ export const robboGroupsQueryGraphQL = {
         return graphQLClient.query(
             {
                 query: robboGroupGQL.GET_ALL_ROBBO_GROUPS,
+                variables: { page, pageSize: "10" },
+            },
+        )
+    },
+
+    getAllRobboGroupsForUnitAdmin(page, pageSize) {
+        return graphQLClient.query(
+            {
+                query: robboGroupGQL.GET_ALL_ROBBO_GROUPS_FOR_UNIT_ADMIN,
                 variables: { page, pageSize: "10" },
             },
         )

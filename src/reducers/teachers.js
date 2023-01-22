@@ -1,10 +1,28 @@
 import { handleActions } from 'redux-actions'
 
-import { clearTeachersState, createTeacher, createTeacherFailed, createTeacherSuccess, deleteTeacher, deleteTeacherFailed, deleteTeacherSuccess, getTeachers, getTeachersFailed, getTeachersSuccess } from "@/actions"
+import {
+    clearTeachersState,
+    createTeacher,
+    createTeacherFailed,
+    createTeacherSuccess,
+    deleteTeacher,
+    deleteTeacherFailed,
+    deleteTeacherForRobboGroupFailed,
+    deleteTeacherForRobboGroupRequest,
+    deleteTeacherForRobboGroupSuccess,
+    deleteTeacherSuccess,
+    getTeachers,
+    getTeachersFailed,
+    getTeachersSuccess,
+    setTeacherForRobboGroupFailed,
+    setTeacherForRobboGroupRequest,
+    setTeacherForRobboGroupSuccess,
+} from "@/actions"
 
 const INITIAL_STATE = {
     teachers: [],
-    loading: false,
+    teacherRobboGroups: [],
+    loading: true,
 }
 
 export default handleActions({
@@ -18,7 +36,7 @@ export default handleActions({
         return { ...state, loading: false }
     },
     [clearTeachersState](state, action) {
-        return { ...state, loading: false, teachers: [] }
+        return INITIAL_STATE
     },
     [deleteTeacher](state) {
         return { ...state, loading: true }
@@ -36,14 +54,44 @@ export default handleActions({
         return { ...state, loading: true }
     },
     [createTeacherSuccess](state, action) {
-        const { response, teacher } = action.payload
+        const { response } = action.payload
         return {
             ...state,
             loading: false,
-            teachers: [...state.teachers, { userHttp: { id: response.teacherId, ...teacher } }],
+            teachers: [...state.teachers, { userHttp: { ...response.userHttp } }],
         }
     },
     [createTeacherFailed](state, action) {
+        return {
+            ...state, loading: false,
+        }
+    },
+    [setTeacherForRobboGroupRequest](state, action) {
+        return {
+            ...state, loading: true,
+        }
+    },
+    [setTeacherForRobboGroupSuccess](state, action) {
+        return {
+            ...state, loading: false,
+        }
+    },
+    [setTeacherForRobboGroupFailed](state, action) {
+        return {
+            ...state, loading: false,
+        }
+    },
+    [deleteTeacherForRobboGroupRequest](state) {
+        return {
+            ...state, loading: true,
+        }
+    },
+    [deleteTeacherForRobboGroupSuccess](state, action) {
+        return {
+            ...state, loading: false,
+        }
+    },
+    [deleteTeacherForRobboGroupFailed](state, action) {
         return {
             ...state, loading: false,
         }

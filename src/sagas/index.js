@@ -1,6 +1,6 @@
 import { all } from 'redux-saga/effects'
 
-import { loginSaga } from './login'
+import { loginWather } from './login'
 import { myProjectsSaga } from './myProjects'
 import { myCoursesSaga } from './myCourses'
 import { profileSaga } from './profile'
@@ -9,10 +9,11 @@ import { clientsSaga } from './clients'
 import { unitAdminsSaga } from './unitAdmins'
 import { robboUnitsSaga } from './robboUnits'
 import { robboGroupSaga } from './robboGroup'
+import { coursePageSaga } from './coursePage'
 
 export default function* rootSaga() {
   yield all([
-    loginSaga(),
+    loginWather(),
     myProjectsSaga(),
     myCoursesSaga(),
     profileSaga(),
@@ -21,5 +22,6 @@ export default function* rootSaga() {
     unitAdminsSaga(),
     robboUnitsSaga(),
     robboGroupSaga(),
+    coursePageSaga(),
   ])
 }

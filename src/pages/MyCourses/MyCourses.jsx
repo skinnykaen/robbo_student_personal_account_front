@@ -1,58 +1,61 @@
-import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import React from 'react'
+import { Col, Row, Typography, List } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
-import { WelcomeText } from './components'
-
-import CoursePageItem from './MyCoursesItem'
-
-import { PageLayout, Card } from '@/layouts'
-import SideBar from '@/components/SideBar'
-import Loader from '@/components/Loader'
-
-import { getCoursePages, getCoursePagesLoading } from '@/reducers/myCourses'
-import { useIsAuth } from '@/helpers/useIsAuth'
+import PageLayout from '@/components/PageLayout'
+import ListItem from '@/components/ListItem'
 
 
-import Flex from '@/components/Flex'
+const { Title } = Typography
 
-
-import { useActions } from '@/helpers/useActions'
-
-export default () => {
-    const { getAllCoursePages, clearAllCoursePagesState } = useActions()
-    useIsAuth()
-
-    const token = localStorage.getItem('token')
-    useEffect(() => {
-        getAllCoursePages(token)
-        return () => {
-            clearAllCoursePagesState()
-        }
-    }, [])
-
-    const coursePages = useSelector(state => getCoursePages(state.myCourses))
-    const loading = useSelector(state => getCoursePagesLoading(state.myCourses))
+const MyCourses = ({
+    data: {
+        GetCoursesByUser,
+        loading,
+    },
+    pageSize,
+    currentPage,
+    onChangePage,
+}) => {
+    const navigate = useNavigate()
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                <Flex direction='column' align='center'>
-                    <WelcomeText>Мои Курсы</WelcomeText>
-                    {
-                        loading
-                            ? <Loader />
-                            : coursePages?.map((coursePage, index) => {
-                                return (
-                                    <CoursePageItem
-                                        coursePage={coursePage}
-                                        key={index}
-                                    />
-                                )
-                            })
-                    }
-                </Flex>
-            </Card>
+            <Row align='middle'>
+                <Col span={24}>
+                    <Title>Курсы</Title>
+                </Col>
+            </Row>
+            <Row>
+                <Col span={24}>
+                    <List
+                        loading={loading}
+                        bordered
+                        size='large'
+                        dataSource={GetCoursesByUser?.results}
+                        pagination={{
+                            onChange: onChangePage,
+                            total: GetCoursesByUser?.countRows || 10,
+                            current: +currentPage,
+                            defaultCurrent: 1,
+                            defaultPageSize: pageSize,
+                            responsive: true,
+                        }}
+                        itemLayout='vertical'
+                        renderItem={(coursePage, index) => (
+                            <ListItem
+                                itemIndex={index}
+                                key={index}
+                                label={`${coursePage.name}`}
+                                handleClick={() => navigate(`/courses/${coursePage.id}`)}
+                                render={(open, setOpen) => { }}
+                            />
+                        )}
+                    />
+                </Col>
+            </Row>
         </PageLayout>
     )
 }
+
+export default MyCourses

@@ -1,26 +1,50 @@
 import { call, takeLatest, put } from 'redux-saga/effects'
+import { notification } from 'antd'
 
-import { robboGroupAPI } from '@/api'
 import {
     addStudentToRobboGroupFailed,
     addStudentToRobboGroupRequest,
     addStudentToRobboGroupSuccess,
     createRobboGroupFailed,
-    createRobboGroupRequest, createRobboGroupSuccess, deleteRobboGroupFailed, deleteRobboGroupRequest,
+    createRobboGroupRequest,
+    createRobboGroupSuccess,
+    deleteRobboGroupFailed,
+    deleteRobboGroupRequest,
     deleteRobboGroupSuccess,
     deleteStudentFromRobboGroupFailed,
     deleteStudentFromRobboGroupRequest,
+    getAllRobboGroupsFailed,
+    getAllRobboGroupsSuccess,
     getRobboGroupByIdFailed,
-    getRobboGroupByIdRequest, getRobboGroupByIdSuccess,
-    getRobboGroupsByRobboUnitIdFailed, getRobboGroupsByRobboUnitIdRequest,
+    getRobboGroupByIdRequest,
+    getRobboGroupByIdSuccess,
+    getRobboGroupsByAccessTokenRequest,
+    getRobboGroupsByAccessTokenFailed,
+    getRobboGroupsByAccessTokenSuccess,
+    getRobboGroupsByRobboUnitIdFailed,
+    getRobboGroupsByRobboUnitIdRequest,
     getRobboGroupsByRobboUnitIdSuccess,
+    getRobboGroupsByTeacherId,
+    getRobboGroupsByTeacherIdFailed,
+    getRobboGroupsByTeacherIdSuccess,
+    searchRobboGroupsByTitleFailed,
+    searchRobboGroupsByTitleRequest,
+    searchRobboGroupsByTitleSuccess,
+    getAllRobboGroupsRequest,
+    getAllRobboGroupsForUnitAdminRequest,
+    getAllRobboGroupsForUnitAdminSuccess,
+    getAllRobboGroupsForUnitAdminFailed,
 } from '@/actions'
+import {
+    robboGroupMutationsGraphQL,
+    robboGroupsQuerysGraphQL,
+} from '@/graphQL'
 
 function* getRobboGroupByIdSaga(action) {
     try {
         const { token, robboUnitId, robboGroupId } = action.payload
         console.log(action)
-        const response = yield call(robboGroupAPI.getRobboGroupById, token, robboUnitId, robboGroupId)
+        const response = yield call(robboGroupsQuerysGraphQL.getRobboGroupById, token, robboUnitId, robboGroupId)
         console.log(response)
 
         yield put(getRobboGroupByIdSuccess(response.data))
@@ -29,67 +53,138 @@ function* getRobboGroupByIdSaga(action) {
     }
 }
 
-function* deleteRobboGroupSaga(action) {
+function* deleteRobboGroupSaga({ payload }) {
     try {
-        const { token, robboUnitId, robboGroupId, robboGroupIndex } = action.payload
-        const response = yield call(robboGroupAPI.deleteRobboGroup, token, robboUnitId, robboGroupId)
+        const { robboUnitId, robboGroupId, robboGroupIndex } = payload
+        const response = yield call(robboGroupMutationsGraphQL.DeleteRobboGroup, robboGroupId)
         console.log(response)
 
-        yield put(deleteRobboGroupSuccess(response.data, robboGroupIndex))
+        yield put(deleteRobboGroupSuccess(response.data.DeleteRobboGroup, robboGroupIndex))
+        notification.success({ message: '', description: 'Группа успешно удалена!' })
     } catch (e) {
         yield put(deleteRobboGroupFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
-function* createRobboGroupSaga(action) {
+function* createRobboGroupSaga({ payload }) {
     try {
-        const { token, robboUnitId, robboGroup } = action.payload
-        console.log(action.payload)
-        const response = yield call(robboGroupAPI.createRobboGroup, token, robboUnitId, robboGroup)
+        const { robboUnitId, robboGroup } = payload
+        console.log(robboUnitId, robboGroup)
+        const response = yield call(robboGroupMutationsGraphQL.CreateRobboGroup, { robboUnitId: String(robboUnitId), ...robboGroup })
         console.log(response)
 
-        yield put(createRobboGroupSuccess(response.data, robboGroup))
+        yield put(createRobboGroupSuccess(response.data.CreateRobboGroup))
+        notification.success({ message: '', description: 'Группа успешно создана!' })
     } catch (e) {
         yield put(createRobboGroupFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
-function* getRobboGroupsByRobboUnitIdSaga(action) {
+function* getRobboGroupsByRobboUnitIdSaga({ payload }) {
     try {
-        const { token, robboUnitId } = action.payload
-        const response = yield call(robboGroupAPI.getRobboGroupsByRobboUnitId, token, robboUnitId)
+        const { robboUnitId, page, pageSize } = payload
+        const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByRobboUnitId, page, pageSize, robboUnitId)
         console.log(response)
 
-        yield put(getRobboGroupsByRobboUnitIdSuccess(response.data))
+        yield put(getRobboGroupsByRobboUnitIdSuccess(response.data.GetRobboGroupsByRobboUnitId))
     } catch (e) {
         yield put(getRobboGroupsByRobboUnitIdFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
-function* addStudentToRobboGroupSaga(action) {
+function* addStudentToRobboGroupSaga({ payload }) {
     try {
-        const { token, robboGroup, studentId } = action.payload
-        const response = yield call(robboGroupAPI.addStudentToRobboGroup, token, robboGroup, studentId)
+        const { robboGroup, studentId } = payload
+        const response = yield call(robboGroupMutationsGraphQL.SetRobboGroupIdForStudent, studentId, robboGroup.id, robboGroup.robboUnitId)
         console.log(response)
 
-        yield put(addStudentToRobboGroupSuccess(response.data))
+        yield put(addStudentToRobboGroupSuccess(response.data.SetRobboGroupIdForStudent))
+        notification.success({ message: '', description: 'Ученик успешно добавлен в группу!' })
     } catch (e) {
         yield put(addStudentToRobboGroupFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
-function* deleteStudentFromRobboGroupSaga(action) {
+function* deleteStudentFromRobboGroupSaga({ payload }) {
     try {
-        const { token, robboGroup, studentId } = action.payload
-        const response = yield call(robboGroupAPI.deleteStudentFromRobboGroup, token, robboGroup, studentId)
+        const { robboGroup, studentId } = payload
+        const response = yield call(robboGroupMutationsGraphQL.SetRobboGroupIdForStudent, studentId, robboGroup.id, robboGroup.robboUnitId)
         console.log(response)
 
         yield put(deleteStudentFromRobboGroupRequest(response.data))
+        notification.success({ message: '', description: 'Ученик успешно удален из группы!' })
     } catch (e) {
         yield put(deleteStudentFromRobboGroupFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
     }
 }
 
+function* searchRobboGroupsByTitleSaga(action) {
+    try {
+        const { title } = action.payload
+        const response = yield call(robboGroupsQuerysGraphQL.SearchRobboGroupsByName, { name: title })
+        console.log(response)
+
+        yield put(searchRobboGroupsByTitleSuccess(response.data.SearchGroupsByName.robboGroups))
+    } catch (e) {
+        yield put(searchRobboGroupsByTitleFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
+    }
+}
+
+function* getRobboGroupsByTeacherIdSaga(action) {
+    try {
+        const { teacherId, page, pageSize } = action.payload
+        const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByTeacherId, teacherId, page, pageSize)
+
+        yield put(getRobboGroupsByTeacherIdSuccess(response.data.GetRobboGroupsByTeacherId.robboGroups))
+    } catch (e) {
+        yield put(getRobboGroupsByTeacherIdFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
+    }
+}
+
+function* getRobboGroupsByAccessTokenSaga() {
+    try {
+        const response = yield call(robboGroupsQuerysGraphQL.GetRobboGroupsByAccessToken, "1", "10")
+        console.log(response)
+
+        yield put(getRobboGroupsByAccessTokenSuccess(response.data.GetRobboGroupsByAccessToken.robboGroups))
+    } catch (e) {
+        yield put(getRobboGroupsByAccessTokenFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
+    }
+}
+
+function* getAllRobboGroupsSaga({ payload }) {
+    try {
+        const { page, pageSize } = payload
+        const response = yield call(robboGroupsQuerysGraphQL.GetAllRobboGroups, page, pageSize)
+        console.log(response)
+
+        yield put(getAllRobboGroupsSuccess(response.data.GetAllRobboGroups))
+    } catch (e) {
+        yield put(getAllRobboGroupsFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
+    }
+}
+
+function* getAllRobboGroupsForUnitAdminSaga({ payload }) {
+    try {
+        const { page, pageSize } = payload
+        const response = yield call(robboGroupsQuerysGraphQL.GetAllRobboGroupsForUnitAdmin, page, pageSize)
+        console.log(response)
+
+        yield put(getAllRobboGroupsForUnitAdminSuccess(response.data.GetAllRobboGroupsForUnitAdmin.robboGroups))
+    } catch (e) {
+        yield put(getAllRobboGroupsForUnitAdminFailed(e))
+        notification.error({ message: 'Ошибка', description: e.message })
+    }
+}
 
 export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupByIdRequest, getRobboGroupByIdSaga)
@@ -98,4 +193,9 @@ export function* robboGroupSaga() {
     yield takeLatest(getRobboGroupsByRobboUnitIdRequest, getRobboGroupsByRobboUnitIdSaga)
     yield takeLatest(addStudentToRobboGroupRequest, addStudentToRobboGroupSaga)
     yield takeLatest(deleteStudentFromRobboGroupRequest, deleteStudentFromRobboGroupSaga)
+    yield takeLatest(searchRobboGroupsByTitleRequest, searchRobboGroupsByTitleSaga)
+    yield takeLatest(getRobboGroupsByTeacherId, getRobboGroupsByTeacherIdSaga)
+    yield takeLatest(getRobboGroupsByAccessTokenRequest, getRobboGroupsByAccessTokenSaga)
+    yield takeLatest(getAllRobboGroupsRequest, getAllRobboGroupsSaga)
+    yield takeLatest(getAllRobboGroupsForUnitAdminRequest, getAllRobboGroupsForUnitAdminSaga)
 }

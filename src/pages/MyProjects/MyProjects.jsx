@@ -1,60 +1,68 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-
-import { WelcomeText } from './components'
+import { Button, List, Row, Col } from 'antd'
 
 import ProjectPageItem from './MyProjectsItem'
 
-import { PageLayout, Card } from '@/layouts'
-import SideBar from '@/components/SideBar'
-
-import { getMyProjectsLoading, getProjectPages } from '@/reducers/myProjects'
-import { useIsAuth } from '@/helpers/useIsAuth'
-
-
-import Flex from '@/components/Flex'
-import ControlPanel from '@/components/ControlPanel'
+import PageLayout from '@/components/PageLayout'
+import { getProjectPagesState } from '@/reducers/myProjects'
 import Loader from '@/components/Loader'
 import { useActions } from '@/helpers/useActions'
-
+import {
+    getProjectPagesByAccessToken,
+    clearMyProjectsState,
+    createProjectPage,
+} from '@/actions'
 export default () => {
-    useIsAuth()
-
-    const { getAllProjectPages, clearMyProjectsState } = useActions()
-
     const token = localStorage.getItem('token')
+
+    const actions = useActions({
+        getProjectPagesByAccessToken,
+        clearMyProjectsState,
+        createProjectPage,
+    }, [])
     useEffect(() => {
-        getAllProjectPages(token)
+        actions.getProjectPagesByAccessToken()
         return () => {
-            clearMyProjectsState()
+            actions.clearMyProjectsState()
         }
     }, [])
 
-    const projectPages = useSelector(state => getProjectPages(state.myProjects))
-    const loading = useSelector(state => getMyProjectsLoading(state.myProjects))
+    const { projectPages, newProjectId, loading } = useSelector(({ myProjects }) => getProjectPagesState(myProjects))
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                <Flex direction='column' align='center' >
-                    <WelcomeText>Мои проекты</WelcomeText>
-                    <ControlPanel />
 
-                    {loading
-                        ? <Loader />
-                        : projectPages?.map((projectPage, index) => {
-                            return (
-                                <ProjectPageItem
-                                    projectPage={projectPage}
-                                    projectPageIndex={index}
-                                    key={index}
+            <React.Fragment>
+                <Row style={{ margin: '0.5rem' }}>
+                    <Col span={24}>Мои проекты</Col>
+                    <Col span={24}>
+                        <Button
+                            type='primary' onClick={() => actions.createProjectPage(token)}>
+                            Создать новый
+                        </Button>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={24}>
+                        {
+                            loading
+                                ? <Loader />
+                                : <List
+                                    bordered
+                                    dataSource={projectPages}
+                                    renderItem={(projectPage, index) => (
+                                        <ProjectPageItem
+                                            projectPage={projectPage}
+                                            projectPageIndex={index}
+                                            key={index}
+                                        />
+                                    )}
                                 />
-                            )
-                        })
-                    }
-                </Flex>
-            </Card>
-        </PageLayout>
+                        }
+                    </Col>
+                </Row>
+            </React.Fragment>
+        </PageLayout >
     )
 }

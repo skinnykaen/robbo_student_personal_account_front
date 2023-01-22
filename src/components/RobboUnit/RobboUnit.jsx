@@ -1,73 +1,55 @@
-import React, { useEffect, useState } from "react"
-import { useHistory } from "react-router-dom"
-import { useSelector } from "react-redux"
+import React from "react"
+import { useNavigate } from "react-router-dom"
+import { Button, Tabs } from "antd"
 
-import { Title } from "./components"
+import RobboUnitStudentsTab from "./RobboUnitStudentsTab"
+import RobboUnitCourses from "./RobboUnitCourses"
 
-import { useActions } from "@/helpers/useActions"
 import RobboUnitCard from "@/components/RobboUnitCard"
 import Flex from '@/components/Flex'
-import { getRobboUnitState } from "@/reducers/robboUnit"
-import { Button, ModalWindow } from "@/components/UI"
-import Loader from "@/components/Loader"
 import RobboUnitAccessSetting from "@/components/RobboUnitAccessSetting"
 
 export default ({ robboUnitId }) => {
-
-    const token = localStorage.getItem('token')
-    const history = useHistory()
-    const { getRobboUnitById } = useActions()
-    const { robboUnit, loading } = useSelector(({ robboUnit }) => getRobboUnitState(robboUnit))
-    const [openAccessSetting, setOpenAccessSetting] = useState(false)
-
-    useEffect(() => {
-        getRobboUnitById(token, robboUnitId)
-        return () => {
-            // clear robboUnit {}
-        }
-    }, [])
+    const history = useNavigate()
 
     return (
         <Flex width='100%'>
-            {
-                loading ? <Loader />
-                    : (
-                        <Flex
-                            direction='column' width='100%'
-                            padding='0.5rem'
-                        >
-                            <Flex justify='center' width='100%'>
-                                <Title>Robbo Unit</Title>
-                            </Flex>
-
-                            <RobboUnitCard robboUnit={robboUnit} />
-                            <Flex direction='column' align='flex-start'>
-                                <Button
-                                    content='Группы учеников'
-                                    padding='1rem'
-                                    background='green'
-                                    margin='0.5rem'
-                                    handleSubmit={() => history.push(`/robboUnits/${robboUnit.id}/groups`)}
-                                />
-                                <Button
-                                    content='Настроить доступ'
-                                    padding='1rem'
-                                    background='green'
-                                    margin='0.5rem'
-                                    handleSubmit={() => setOpenAccessSetting(true)}
-                                />
-                            </Flex>
-                            <ModalWindow
-                                open={openAccessSetting} setOpen={setOpenAccessSetting}
-                                width='35%' height='60%'
-                                content={() => (
-                                    <RobboUnitAccessSetting />
-                                )}
-                            />
-                        </Flex>
-
-                    )
-            }
+            <Flex
+                direction='column' width='100%'
+                padding='0.5rem'
+            >
+                Robbo Unit
+                <Tabs
+                    defaultActiveKey='1'
+                    items={[
+                        {
+                            label: 'Карточка',
+                            key: '1',
+                            children: <RobboUnitCard robboUnitId={robboUnitId} />,
+                        },
+                        {
+                            label: 'Группы',
+                            key: '2',
+                            children: <Button onClick={() => history(`/robboUnits/${robboUnitId}/groups`)}>Группы</Button>,
+                        },
+                        {
+                            label: 'Доступ',
+                            key: '3',
+                            children: <RobboUnitAccessSetting robboUnitId={robboUnitId} />,
+                        },
+                        {
+                            label: 'Ученики',
+                            key: '4',
+                            children: <RobboUnitStudentsTab robboUnitId={robboUnitId} />,
+                        },
+                        {
+                            label: 'Курсы',
+                            key: '5',
+                            children: <RobboUnitCourses robboUnitId={robboUnitId} />,
+                        },
+                    ]}
+                />
+            </Flex>
         </Flex >
     )
 }

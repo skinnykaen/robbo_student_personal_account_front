@@ -1,14 +1,7 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
-import * as FaIcons from 'react-icons/fa'
-
-import {
-    SideBar,
-    Navbar,
-    MenuIconOpen,
-    MenuIconClose,
-    SidebarMenu,
-} from './components'
+import React from 'react'
+import { Menu } from 'antd'
+import { useMutation } from '@apollo/client'
+import { useNavigate } from 'react-router-dom'
 
 import {
     SidebarDataSuperAdmin,
@@ -18,19 +11,19 @@ import {
     SidebarDataUnitAdmin,
     SidebarDataFreeListener,
 } from './SideBarData.jsx'
-import MenuItem from './MenuItem'
 
-import { useActions } from '@/helpers/useActions'
-import { getLoginState } from '@/reducers/login'
+import { authMutationsGQL, graphQLClient } from '@/graphQL/index.js'
+import { useActions, parseJwt } from '@/helpers'
+import { signOutRequest } from '@/actions'
+import { LOGIN_PAGE_ROUTE } from '@/constants'
 
-export default () => {
-    const [close, setClose] = useState(false)
-    const showSidebar = () => setClose(!close)
-    const { signOutRequest } = useActions()
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
-
+export default ({ selectedNavBarKey = '1' }) => {
+    const navigate = useNavigate()
+    const actions = useActions({ signOutRequest }, [])
+    const token = localStorage.getItem('token')
+    const { Role } = parseJwt(token)
     let SideBarData = []
-    switch (userRole) {
+    switch (Role) {
         case 0: {
             SideBarData = SidebarDataStudent
             break
@@ -57,35 +50,31 @@ export default () => {
         }
     }
 
-    const signOutHandler = path => {
-        if (path === '/login') {
-            signOutRequest()
+    const [loginOut, loginOutMutation] = useMutation(authMutationsGQL.SING_OUT, {
+        onCompleted: ({ SingIn }) => {
+            graphQLClient.resetStore()
+            localStorage.removeItem('token')
+            navigate('/login')
+        },
+    })
+
+    const onMenuClick = ({ item, key }) => {
+        if (item.props.pathname === LOGIN_PAGE_ROUTE) {
+            // actions.signOutRequest()
+            loginOut()
         }
+        else {
+            navigate(item.props.pathname, { state: { selectedNavBarKey: key } })
+        }
+
     }
-
     return (
-        <SideBar>
-            <Navbar>
-                <MenuIconOpen to='#' onClick={showSidebar}>
-                    <FaIcons.FaBars />
-                </MenuIconOpen>
-            </Navbar>
-
-            <SidebarMenu close={close}>
-                <MenuIconClose to='#' onClick={showSidebar}>
-                    <FaIcons.FaTimes />
-                </MenuIconClose>
-
-                {SideBarData.map((item, index) => {
-                    return (
-                        <MenuItem
-                            key={index}
-                            item={item}
-                            index={index}
-                            signOutHandler={signOutHandler} />
-                    )
-                })}
-            </SidebarMenu>
-        </SideBar>
+        <Menu
+            theme='light'
+            mode='inline'
+            selectedKeys={[selectedNavBarKey]}
+            onClick={onMenuClick}
+            items={SideBarData}
+        />
     )
 }

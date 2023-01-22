@@ -14,11 +14,12 @@ import {
     searchUnitAdminsByEmailFailed, searchUnitAdminsByEmailRequest,
     searchUnitAdminsByEmailSuccess, setNewUnitAdminForRobboUnitFailed,
     setNewUnitAdminForRobboUnitRequest, setNewUnitAdminForRobboUnitSuccess,
+    clearUnitAdminsPageState,
 } from '@/actions'
 
 const INITIAL_STATE = {
     unitAdmins: [],
-    loading: false,
+    loading: true,
     searchResult: [],
 }
 
@@ -35,11 +36,9 @@ export default handleActions({
     [deleteUnitAdmin](state, action) {
         return { ...state, loading: true }
     },
-    [deleteUnitAdminSuccess](state, action) {
-        console.log(action)
-        const { unitAdminIndex } = action.payload
+    [deleteUnitAdminSuccess](state, { payload }) {
         const newUnitAdmins = [...state.unitAdmins]
-        newUnitAdmins.splice(unitAdminIndex, 1)
+        newUnitAdmins.splice(payload.unitAdminIndex, 1)
         return { ...state, loading: false, unitAdmins: newUnitAdmins }
     },
     [deleteUnitAdminFailed](state, action) {
@@ -48,13 +47,12 @@ export default handleActions({
     [createUnitAdmin](state) {
         return { ...state, loading: true }
     },
-    [createUnitAdminSuccess](state, action) {
-        console.log(action)
-        const { response, unitAdmin } = action.payload
+    [createUnitAdminSuccess](state, { payload }) {
+        const { response } = payload
         return {
             ...state,
             loading: false,
-            unitAdmins: [...state.unitAdmins, { userHttp: { id: response.unitAdminId, ...unitAdmin } }],
+            unitAdmins: [...state.unitAdmins, { userHttp: { ...response.userHttp } }],
         }
     },
     [createUnitAdminFailed](state) {
@@ -95,6 +93,9 @@ export default handleActions({
     },
     [deleteUnitAdminForRobboUnitFailed](state) {
         return { ...state, loading: false }
+    },
+    [clearUnitAdminsPageState](state) {
+        return INITIAL_STATE
     },
 }, INITIAL_STATE)
 

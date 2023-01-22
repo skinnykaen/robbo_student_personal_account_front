@@ -1,97 +1,88 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { Redirect } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Modal, Button, Row, Col, List, Typography } from 'antd'
 
-import { ListParents, WelcomeText } from './components'
-
-import { getClientsState } from '@/reducers/clients'
-import { PageLayout, Card } from '@/layouts'
-import SideBar from '@/components/SideBar'
-import Flex from '@/components/Flex'
+import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
-import { ModalWindow, Button } from '@/components/UI'
-import { useActions } from '@/helpers/useActions'
-import Loader from '@/components/Loader'
-import ParentContent from '@/components/ParentContent'
+import ParentContentContainer from '@/components/ParentContent'
 import AddParent from '@/components/AddParent/AddParent'
-import { useIsAuth } from '@/helpers'
-import { getLoginState } from '@/reducers/login'
+import { DragResize } from '@/components/UI'
+import { useActions } from '@/helpers/useActions'
+import { deleteParentRequest } from '@/actions'
 
-export default () => {
-    useIsAuth()
-    const { getClients, deleteParentRequest } = useActions()
+const { Title } = Typography
 
-    useEffect(() => {
-        getClients(token)
-        return () => {
-            // clearstate
-        }
-    }, [])
-
-    const token = localStorage.getItem('token')
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
-    const { parents, clientsLoading } = useSelector(({ clients }) => getClientsState(clients))
+const Clients = ({
+    data: {
+        GetAllParents,
+        loading,
+    },
+    pageSize,
+    currentPage,
+    onChangePage,
+}) => {
+    const actions = useActions({ deleteParentRequest }, [])
     const [openAddClients, setOpenAddClients] = useState(false)
-
-    if (userRole !== 5) {
-        return <Redirect to='/home' />
-    }
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                <Flex width='100%' height='100%'
-                    direction='column'
-                >
-                    <WelcomeText>Клиенты</WelcomeText>
-                    <ModalWindow
-                        open={openAddClients} setOpen={setOpenAddClients}
-                        width='35%' height='60%'
-                        content={() => (
-                            <AddParent />
+            <Row align='middle'>
+                <Col span={22}>
+                    <Title>Клиенты</Title>
+                </Col>
+                <Col span={1}>
+                    <Button type='primary' onClick={() => setOpenAddClients(true)}>
+                        Добавить родителя
+                    </Button>
+                </Col>
+            </Row>
+            <Modal
+                title='Заполните данные клиента'
+                centered
+                open={openAddClients}
+                onCancel={() => setOpenAddClients(false)}
+                footer={[]}
+            >
+                <AddParent />
+            </Modal>
+            <Row>
+                <Col span={24}>
+                    <List
+                        loading={loading}
+                        bordered
+                        size='large'
+                        dataSource={GetAllParents?.parents}
+                        pagination={{
+                            onChange: onChangePage,
+                            total: GetAllParents?.countRows,
+                            current: +currentPage,
+                            defaultCurrent: 1,
+                            defaultPageSize: pageSize,
+                            responsive: true,
+                        }}
+                        itemLayout='vertical'
+                        renderItem={({ userHttp }, index) => (
+                            <ListItem
+                                itemIndex={index}
+                                handleDelete={
+                                    parentIndex => actions.deleteParentRequest(userHttp.id, parentIndex)
+                                }
+                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                key={index}
+                                render={(open, setOpen) => (
+                                    <DragResize
+                                        open={open} setOpen={setOpen}
+                                        content={() => (
+                                            <ParentContentContainer parentId={userHttp.id} />
+                                        )}
+                                    />
+                                )}
+                            />
                         )}
                     />
-                    <Flex
-                        direction='row' justify='flex-end'
-                        align='flex-start'>
-                        <Button
-                            content='Добавить родителя'
-                            background='darkgreen'
-                            padding='0.5rem'
-                            handleSubmit={() => setOpenAddClients(true)}
-                        />
-                    </Flex>
-                    <ListParents>
-                        {
-                            clientsLoading ? <Loader />
-                                : (
-                                    parents?.map((parent, index) => {
-                                        return (
-                                            <ListItem
-                                                itemIndex={index}
-                                                handleDelete={parentIndex => deleteParentRequest(token, parent.userHttp.id, parentIndex)}
-                                                label={`${parent.userHttp.lastname} ${parent.userHttp.firstname} ${parent.userHttp.middlename}`}
-                                                key={index}
-                                                render={(open, setOpen) => (
-                                                    <ModalWindow
-                                                        open={open} setOpen={setOpen}
-                                                        width='65%' height='80%'
-                                                        content={() => (
-                                                            <ParentContent
-                                                                client={parent} open={open}
-                                                                setOpen={setOpen}
-                                                            />
-                                                        )}
-                                                    />
-                                                )}
-                                            />
-                                        )
-                                    })
-                                )}
-                    </ListParents>
-                </Flex>
-            </Card>
-        </PageLayout>
+                </Col>
+            </Row>
+        </PageLayout >
     )
 }
+
+export default Clients

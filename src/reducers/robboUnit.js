@@ -1,19 +1,22 @@
 import { handleActions } from 'redux-actions'
 
 import {
-    getRobboUnitById,
     getRobboUnitByIdFailed,
     getRobboUnitByIdSuccess,
-    updateRobboUnit, updateRobboUnitFailed, updateRobboUnitSuccess,
+    updateRobboUnitFailed,
+    updateRobboUnitSuccess,
+    clearRobboUnitPage,
+    getRobboUnitByIdRequest,
+    updateRobboUnitRequest,
 } from '@/actions'
 
 const INITIAL_STATE = {
     robboUnit: {},
-    loading: false,
+    loading: true,
 }
 
 export default handleActions({
-    [getRobboUnitById](state) {
+    [getRobboUnitByIdRequest](state) {
         return { ...state, loading: true }
     },
     [getRobboUnitByIdSuccess](state, action) {
@@ -22,11 +25,7 @@ export default handleActions({
     [getRobboUnitByIdFailed](state, action) {
         return { ...state, loading: false }
     },
-    // [clearTeachersState](state, action) {
-    //     return { ...state, loading: false, robboUnits: [] }
-    // },
-
-    [updateRobboUnit](state) {
+    [updateRobboUnitRequest](state) {
         return { ...state, loading: true }
     },
     [updateRobboUnitSuccess](state) {
@@ -34,6 +33,9 @@ export default handleActions({
     },
     [updateRobboUnitFailed](state) {
         return { ...state, loading: false }
+    },
+    [clearRobboUnitPage](state) {
+        return INITIAL_STATE
     },
 }, INITIAL_STATE)
 

@@ -5,10 +5,10 @@ import { Text } from './components'
 import Flex from '@/components/Flex'
 import SignUpForm from '@/components/SignUpForm'
 import { useActions } from '@/helpers/useActions'
+import { createUnitAdmin } from '@/actions'
 
 export default memo(() => {
-    const { createUnitAdmin } = useActions()
-    const token = localStorage.getItem('token')
+    const actions = useActions({ createUnitAdmin }, [])
 
     return (
         <Flex
@@ -18,7 +18,7 @@ export default memo(() => {
             <Text>Добавление Unit Админа</Text>
             <SignUpForm
                 margin='0 0 10px 0'
-                handleSubmit={unitAdmin => createUnitAdmin(token, unitAdmin)}
+                handleSubmit={unitAdmin => actions.createUnitAdmin(unitAdmin)}
                 buttonOption={{
                     content: 'Добавить',
                     padding: '10px',

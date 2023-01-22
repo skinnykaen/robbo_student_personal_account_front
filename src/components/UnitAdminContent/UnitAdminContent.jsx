@@ -1,32 +1,46 @@
 import React from 'react'
+import { Tabs } from "antd"
+import { useQuery } from '@apollo/client'
 
-import { Title, SubTitle } from './components'
+import UnitsOfAdmin from './UnitsOfAdmin'
 
+import Loader from '@/components/Loader'
 import Flex from '@/components/Flex'
 import ProfileCard from '@/components/ProfileCard'
 import { useActions } from '@/helpers/useActions'
-// import Button from '@/components/UI/Button'
+import { unitAdminQuerysGQL } from '@/graphQL'
+import { updateProfile } from '@/actions'
 
-export default ({ unitAdmin }) => {
+export default ({ unitAdminId }) => {
 
-    const { updateProfile } = useActions()
+    const actions = useActions({ updateProfile }, [])
+
+    const { data, loading } = useQuery(unitAdminQuerysGQL.GET_UNIT_ADMIN_BY_ID, {
+        variables: { unitAdminId },
+        notifyOnNetworkStatusChange: true,
+    })
 
     return (
         <Flex direction='column' width='100%'>
             <Flex padding='0 1rem' direction='column'
             >
-                <Flex direction='column'
-                    align='center'>
-                    <Title>{`${unitAdmin.lastname} ${unitAdmin.firstname} ${unitAdmin.middlename}`}</Title>
-                    <ProfileCard profile={unitAdmin} updateHandle={updateProfile} />
-                    {/* <Button
-                        content='Назначить на курс'
-                        background='darkgreen'
-                        padding='0.5rem'
-                        width='20%'
-                    /> */}
-                </Flex>
-                <SubTitle>Курсы</SubTitle >
+                <Tabs
+                    defaultActiveKey='1'
+                    items={[
+                        {
+                            label: 'Карточка',
+                            key: '1',
+                            children: loading
+                                ? <Loader />
+                                : <ProfileCard profile={data.GetUnitAdminById.userHttp} updateHandle={actions.updateProfile} />,
+                        },
+                        {
+                            label: 'Units',
+                            key: '2',
+                            children: <UnitsOfAdmin unitAdminId={unitAdminId} />,
+                        },
+                    ]}
+                />
             </Flex>
         </Flex>
     )

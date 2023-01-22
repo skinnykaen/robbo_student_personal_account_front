@@ -1,26 +1,22 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { Button, Space } from 'antd'
 
-import { ProjectPageItem, ScratchLink, Avatar, LastModified, RemoveProjectPage } from './components'
+import { ProjectPageItem, ScratchLink, LastModified, RemoveProjectPage } from './components'
 
 import config from '@/config'
 import { useActions } from '@/helpers/useActions'
 import Flex from '@/components/Flex'
-import Button from '@/components/UI/Button'
-
+import { deleteProjectPage } from '@/actions'
 
 export default ({ projectPageIndex, projectPage }) => {
 
-    const { deleteProjectPage } = useActions()
-    const history = useHistory()
+    const actions = useActions({ deleteProjectPage }, [])
+    const history = useNavigate()
     const token = localStorage.getItem('token')
 
-    const deleteProjectPageHandler = () => {
-        deleteProjectPage(token, projectPage.projectId, projectPageIndex)
-    }
-
     const toProjectPageHandler = () => {
-        history.push(`/projects/${projectPage.projectId}`)
+        history(`/projects/${projectPage.projectPageId}`)
     }
 
     const seeInsideHandler = () => {
@@ -29,25 +25,18 @@ export default ({ projectPageIndex, projectPage }) => {
 
     return (
         <ProjectPageItem>
-            <Avatar />
-            <Flex direction='column' margin='0 1rem'
-                justify='space-between'>
+            <Space direction='vertical'>
                 <ScratchLink onClick={toProjectPageHandler}> {projectPage.title}</ScratchLink>
                 <LastModified>
                     {'Последние изменение: ' + projectPage.lastModified}
                 </LastModified>
-                <Button
-                    content='Перейти'
-                    background='grey'
-                    height='2rem'
-                    width='7rem'
-                    padding='0 1rem'
-                    handleSubmit={seeInsideHandler}
-                />
-            </Flex>
+                <Button type='primary' onClick={seeInsideHandler}>
+                    Перейти
+                </Button>
+            </Space>
             <Flex width='58%' justify='flex-end'
                 align='center'>
-                <RemoveProjectPage onClick={deleteProjectPageHandler}>
+                <RemoveProjectPage onClick={() => actions.deleteProjectPage(token, projectPage.projectPageId, projectPageIndex)}>
                     удалить
                 </RemoveProjectPage>
             </Flex>

@@ -1,99 +1,85 @@
-import React, { useState, useEffect } from "react"
-import { useSelector } from "react-redux"
-import { Redirect } from "react-router-dom"
+import React, { useState } from "react"
+import { Modal, Button, Typography, Row, Col, List } from "antd"
 
-import { WelcomeText } from "./components"
-
-import { PageLayout, Card } from "@/layouts"
-import SideBar from "@/components/SideBar"
-import { ModalWindow, Button } from '@/components/UI'
+import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
-import Flex from '@/components/Flex'
 import AddUnitAdmin from "@/components/AddUnitAdmin"
-
-import { getUnitAdminsState } from "@/reducers/unitAdmins"
-import Loader from "@/components/Loader"
-import { useIsAuth } from "@/helpers"
-import { useActions } from "@/helpers/useActions"
 import UnitAdminContent from "@/components/UnitAdminContent"
-import { getLoginState } from "@/reducers/login"
+import { DragResize } from '@/components/UI'
+import { useActions } from "@/helpers/useActions"
+import { deleteUnitAdmin } from '@/actions'
 
-export default () => {
+const { Title } = Typography
 
-    useIsAuth()
-
-    const token = localStorage.getItem('token')
+const UnitAdmins = ({
+    data: {
+        GetAllUnitAdmins,
+        loading,
+    },
+    currentPage,
+    onChangePage,
+    pageSize,
+}) => {
     const [openAddUnitAdmin, setOpenAddUnitAdmin] = useState(false)
-    const { loading, unitAdmins } = useSelector(({ unitAdmins }) => getUnitAdminsState(unitAdmins))
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
-
-    if (userRole !== 5) {
-        return <Redirect to='/home' />
-    }
-    const { deleteUnitAdmin, getUnitAdmins } = useActions()
-
-    useEffect(() => {
-        getUnitAdmins(token)
-        return () => {
-            // clearTeachersState
-        }
-    }, [])
+    const actions = useActions({ deleteUnitAdmin }, [])
 
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                <WelcomeText>Unit Админы</WelcomeText>
-                <ModalWindow
-                    open={openAddUnitAdmin} setOpen={setOpenAddUnitAdmin}
-                    width='35%' height='60%'
-                    content={() => (
-                        <AddUnitAdmin />
-                    )}
-                />
-                <Flex direction='row' justify='flex-end'
-                    align='flex-start'>
-                    <Button
-                        background='green'
-                        content='Добавить Unit Админа'
-                        padding='0.5rem'
-                        handleSubmit={() => { setOpenAddUnitAdmin(true) }}
+            <Row align='middle'>
+                <Col span={21}>
+                    <Title>Unit Админы</Title>
+                </Col>
+                <Col span={1}>
+                    <Button type='primary' onClick={() => setOpenAddUnitAdmin(true)}>
+                        Добавить Unit Admin
+                    </Button>
+                </Col>
+            </Row>
+            <Modal
+                centered
+                open={openAddUnitAdmin}
+                onCancel={() => setOpenAddUnitAdmin(false)}
+                footer={[]}
+            >
+                <AddUnitAdmin />
+            </Modal>
+            <Row>
+                <Col span={24}>
+                    <List
+                        loading={loading}
+                        bordered
+                        size='large'
+                        dataSource={GetAllUnitAdmins?.unitAdmins}
+                        pagination={{
+                            onChange: onChangePage,
+                            total: GetAllUnitAdmins?.countRows,
+                            current: +currentPage,
+                            defaultCurrent: 1,
+                            defaultPageSize: pageSize,
+                            responsive: true,
+                        }}
+                        itemLayout='vertical'
+                        renderItem={({ userHttp }, index) => (
+                            <ListItem
+                                itemIndex={index}
+                                handleDelete={unitAdminIndex => actions.deleteUnitAdmin(userHttp.id, unitAdminIndex)}
+                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                key={index}
+                                render={(open, setOpen) => (
+                                    <DragResize
+                                        open={open} setOpen={setOpen}
+                                        content={() => (
+                                            <UnitAdminContent unitAdminId={userHttp.id} />
+                                        )}
+                                    />
+                                )}
+                            />
+                        )}
                     />
-                </Flex>
-                {
-                    loading ? <Loader />
-                        : (
-                            <Flex
-                                widht='100%' direction='column'
-                                justify=' center'
-                            >
-                                <Flex direction='column'>
-                                    {
-                                        unitAdmins?.map((unitAdmin, index) => {
-                                            return (
-                                                <ListItem
-                                                    itemIndex={index}
-                                                    key={index}
-                                                    label={`${unitAdmin.userHttp.lastname} ${unitAdmin.userHttp.firstname} ${unitAdmin.userHttp.middlename}`}
-                                                    handleDelete={unitAdminIndex => deleteUnitAdmin(token, unitAdmin.userHttp.id, unitAdminIndex)}
-                                                    render={(open, setOpen) => (
-                                                        <ModalWindow
-                                                            open={open} setOpen={setOpen}
-                                                            width='65%' height='80%'
-                                                            content={() => (
-                                                                <UnitAdminContent unitAdmin={unitAdmin.userHttp} />
-                                                            )}
-                                                        />
-                                                    )}
-                                                />
-                                            )
-                                        })
-                                    }
-                                </Flex>
-                            </Flex>
-                        )
-                }
-            </Card>
+                </Col>
+            </Row>
         </PageLayout>
     )
 }
+
+export default UnitAdmins

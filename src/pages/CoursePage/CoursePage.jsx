@@ -1,33 +1,36 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Navigate, useParams } from 'react-router-dom'
+import { Button, Row, Col, Modal } from 'antd'
 
 import { Title, Avatar, Description } from './components'
 
-import { PageLayout, Card } from '@/layouts'
-import SideBar from '@/components/SideBar'
+import PageLayout from '@/components/PageLayout'
 import Flex from '@/components/Flex'
-import Button from '@/components/UI/Button'
 import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
-import { useIsAuth } from '@/helpers/useIsAuth'
+import { checkAccess, courseDescriptionParser } from '@/helpers'
 import { useActions } from '@/helpers/useActions'
-import { courseDescriptionParser } from '@/helpers/courseDescriptionParser'
+import { getCoursePageById, clearCoursePageState } from '@/actions'
+import {
+    EDX_TEST_COURSES_ADDRESS,
+    SUPER_ADMIN,
+    UNIT_ADMIN,
+    TEACHER,
+} from '@/constants'
+import CourseAccess from '@/components/CourseAccess'
 
-export default props => {
-    const EDX_TEST_COURSES_ADDRESS = 'https://edx-test.ru/courses/'
-
-    const { getCoursePageById, clearCoursePageState } = useActions()
-    useIsAuth()
+export default ({ userRole }) => {
+    const [open, setOpen] = useState(false)
 
     const token = localStorage.getItem('token')
-    // TO DO useParams
-    const { coursePageId } = props.match.params
+    const { coursePageId } = useParams()
+    const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
 
     useEffect(() => {
-        getCoursePageById(token, coursePageId)
-
+        actions.getCoursePageById(token, coursePageId)
         return () => {
-            clearCoursePageState()
+            actions.clearCoursePageState()
         }
     }, [])
 
@@ -40,58 +43,82 @@ export default props => {
 
     return (
         <PageLayout>
-            <Card>
-                {
-                    loading
-                        ? <Loader />
-                        : (
-                            <div>
-                                <SideBar />
-                                <Flex padding='2rem' direction='column'>
-                                    <Title>{coursePage.name}</Title>
-                                    <Flex direction='row'>
-                                        <Flex direction='column' margin='0 1rem 0 0'
-                                            style={{ maxWidth: '250px' }}>
-                                            <Avatar src={coursePage.media.image.large} />
+            {
+                loading
+                    ? <Loader />
+                    : (
+                        <Flex padding='2rem' direction='column'>
+                            <Title>{coursePage.name}</Title>
+                            <Flex direction='row'>
+                                <Flex direction='column' margin='0 1rem 0 0'
+                                    style={{ maxWidth: '250px' }}>
+                                    <Avatar src={coursePage?.media?.image?.large} />
+                                    <Row gutter={[8, 8]}>
+                                        <Col span={24}>
                                             <Button
-                                                content='Открыть курс'
-                                                background='darkgreen'
-                                                margin='1rem 0 0 0' padding='0.5rem'
-                                                handleSubmit={openCourseButtonHandler}
-                                            />
+                                                type='primary' size='large'
+                                                onClick={openCourseButtonHandler}
+                                            >
+                                                Открыть курс
+                                            </Button>
+                                        </Col>
+                                        <Col span={24}>
                                             <Button
-                                                content='Прогресс'
-                                                background='darkgrey'
-                                                margin='1rem 0 0 0' padding='0.5rem'
-                                            />
+                                                type='primary' size='large'
+                                            >
+                                                Прогресс
+                                            </Button>
+                                        </Col>
+                                        {
+                                            checkAccess(userRole, [UNIT_ADMIN, SUPER_ADMIN, TEACHER]) &&
+                                            <Col span={24}>
+                                                <Button
+                                                    type='primary' size='large'
+                                                    onClick={() => setOpen(true)}
+                                                >
+                                                    Доступ
+                                                </Button>
+                                            </Col>
+                                        }
+                                        <Col>
                                             <Button
-                                                content='Внешние источники'
-                                                background='darkgrey'
-                                                margin='1rem 0 0 0' padding='0.5rem'
-                                            />
+                                                type='primary' size='large'
+                                            >
+                                                Внешние источники
+                                            </Button>
+                                        </Col>
+                                        <Col>
                                             <Button
-                                                content='Связь с преподавателем'
-                                                background='darkgrey'
-                                                margin='1rem 0 0 0' padding='0.5rem'
-                                            />
-                                        </Flex>
-                                        <Flex direction='column'>
-                                            <Flex direction='column'>
-                                                <h4>Описание курса</h4>
-                                                <Description>
-                                                    {courseDescriptionParser(coursePage)}
-                                                </Description>
+                                                type='primary' size='large'
+                                            >
+                                                Связь с преподавателем
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                </Flex>
+                                <Flex direction='column'>
+                                    <Flex direction='column'>
+                                        <h4>Описание курса</h4>
+                                        <Description>
+                                            {courseDescriptionParser(coursePage)}
+                                        </Description>
 
-                                            </Flex>
-                                        </Flex>
                                     </Flex>
                                 </Flex>
-                            </div>
-                        )
+                                <Modal
+                                    title='Доступ к курсу' centered
+                                    open={open} onOk={() => setOpen(true)}
+                                    // confirmLoading={ }
+                                    onCancel={() => setOpen(false)}
+                                    width='50%'
+                                >
+                                    <CourseAccess courseId={coursePage.id} userRole={userRole} />
+                                </Modal>
+                            </Flex>
+                        </Flex >
+                    )
 
-                }
-
-            </Card>
+            }
         </PageLayout >
     )
 

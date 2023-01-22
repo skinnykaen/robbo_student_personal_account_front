@@ -2,14 +2,27 @@ import { createAction } from 'redux-actions'
 import { toast } from 'react-toastify'
 
 import {
-    GET_ALL_PROJECT_PAGES, GET_ALL_PROJECT_PAGES_FAILED, GET_ALL_PROJECT_PAGES_SUCCESS,
-    GET_PROJECT_PAGE_BY_ID, GET_PROJECT_PAGE_BY_ID_FAILED, GET_PROJECT_PAGE_BY_ID_SUCCESS,
-    UPDATE_PROJECT_PAGE, UPDATE_PROJECT_PAGE_FAILED, UPDATE_PROJECT_PAGE_SUCCESS,
-    CREATE_PROJECT_PAGE, CREATE_PROJECT_PAGE_FAILED, CREATE_PROJECT_PAGE_SUCCESS,
-    DELETE_PROJECT_PAGE, DELETE_PROJECT_PAGE_SUCCESS, DELETE_PROJECT_PAGE_FAILED,
-    ONCHANGE_PROJECT_PAGE_TITLE, ONCHANGE_PROJECT_PAGE_INSTRUCTION, ONCHANGE_PROJECT_PAGE_NOTES,
+    GET_ALL_PROJECT_PAGES,
+    GET_ALL_PROJECT_PAGES_FAILED,
+    GET_ALL_PROJECT_PAGES_SUCCESS,
+    GET_PROJECT_PAGE_BY_ID,
+    GET_PROJECT_PAGE_BY_ID_FAILED,
+    GET_PROJECT_PAGE_BY_ID_SUCCESS,
+    UPDATE_PROJECT_PAGE,
+    UPDATE_PROJECT_PAGE_FAILED,
+    UPDATE_PROJECT_PAGE_SUCCESS,
+    CREATE_PROJECT_PAGE,
+    CREATE_PROJECT_PAGE_FAILED,
+    CREATE_PROJECT_PAGE_SUCCESS,
+    DELETE_PROJECT_PAGE,
+    DELETE_PROJECT_PAGE_SUCCESS,
+    DELETE_PROJECT_PAGE_FAILED,
     ONSHARED_PROJECT,
-    CLEAR_PROJECT_PAGE_STATE, CLEAR_MY_PROJECTS_STATE,
+    CLEAR_PROJECT_PAGE_STATE,
+    CLEAR_MY_PROJECTS_STATE,
+    GET_PROJECT_PAGE_BY_ACCESS_TOKEN,
+    GET_PROJECT_PAGE_BY_ACCESS_TOKEN_SUCCESS,
+    GET_PROJECT_PAGE_BY_ACCESS_TOKEN_FAILED,
 } from '@/constants'
 
 
@@ -115,27 +128,24 @@ export const deleteProjectPageFailed = createAction(DELETE_PROJECT_PAGE_FAILED, 
     }
 })
 
-export const onChangeProjectPageTitle = createAction(ONCHANGE_PROJECT_PAGE_TITLE, title => {
-    return {
-        title,
-    }
-})
-
-export const onChangeProjectPageInstruction = createAction(ONCHANGE_PROJECT_PAGE_INSTRUCTION, instruction => {
-    return {
-        instruction,
-    }
-})
-
-export const onChangeProjectPageNotes = createAction(ONCHANGE_PROJECT_PAGE_NOTES, notes => {
-    return {
-        notes,
-    }
-})
-
 export const onSharedProject = createAction(ONSHARED_PROJECT, isShared => {
     return {
         isShared,
+    }
+})
+
+export const getProjectPagesByAccessToken = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN)
+
+export const getProjectPageByAccessTokenSuccess = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN_SUCCESS, response => {
+    return {
+        response,
+    }
+})
+
+export const getProjectPageByAccessTokenFailed = createAction(GET_PROJECT_PAGE_BY_ACCESS_TOKEN_FAILED, err => {
+    toast.error(err)
+    return {
+        err,
     }
 })
 

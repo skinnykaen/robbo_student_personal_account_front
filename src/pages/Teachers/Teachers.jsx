@@ -1,101 +1,86 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { Redirect } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Modal, Button, Row, Col, Typography, List } from 'antd'
 
-import { WelcomeText } from './components'
-
-import SideBar from "@/components/SideBar"
-import { Card, PageLayout } from "@/layouts"
-import Flex from '@/components/Flex'
-import { useIsAuth } from '@/helpers'
-import { getTeachersState } from '@/reducers/teachers'
-import { useActions } from '@/helpers/useActions'
-import { Button, ModalWindow } from '@/components/UI'
+import PageLayout from '@/components/PageLayout'
 import ListItem from '@/components/ListItem'
 import TeacherContent from '@/components/TeacherContent'
 import AddTeacher from '@/components/AddTeacher'
-import Loader from '@/components/Loader'
-import { getLoginState } from '@/reducers/login'
+import { useActions } from '@/helpers/useActions'
+import { DragResize } from '@/components/UI'
+import { deleteTeacher } from '@/actions'
 
 
+const { Title } = Typography
 
-export default () => {
-    useIsAuth()
+const Teachers = ({
+    data: {
+        GetAllTeachers,
+        loading,
+    },
+    pageSize,
+    currentPage,
+    onChangePage,
+}) => {
 
-    const token = localStorage.getItem('token')
-    const { getTeachers, deleteTeacher } = useActions()
-    const { teachers, loading } = useSelector(({ teachers }) => getTeachersState(teachers))
-    const { userRole } = useSelector(({ login }) => getLoginState(login))
-
-    if (userRole !== 5 || userRole !== 4) {
-        return <Redirect to='/home' />
-    }
-
-    useEffect(() => {
-        getTeachers(token)
-        return () => {
-            // clearTeachersState
-        }
-    }, [])
-
+    const actions = useActions({ deleteTeacher }, [])
     const [openAddTeacher, setOpenAddTeacher] = useState(false)
-
     return (
         <PageLayout>
-            <Card>
-                <SideBar />
-                <WelcomeText>Педагоги</WelcomeText>
-                <ModalWindow
-                    open={openAddTeacher} setOpen={setOpenAddTeacher}
-                    width='35%' height='60%'
-                    content={() => (
-                        <AddTeacher />
-                    )}
-                />
-                <Flex direction='row' justify='flex-end'
-                    align='flex-start'>
-                    <Button
-                        background='green'
-                        content='Добавить педагога'
-                        padding='0.5rem'
-                        handleSubmit={() => setOpenAddTeacher(true)}
+            <Modal
+                title='Заполните данные педагога'
+                open={openAddTeacher}
+                footer={[]}
+                onCancel={() => setOpenAddTeacher(false)}
+            >
+                <AddTeacher />
+            </Modal>
+            <Row align='middle'>
+                <Col span={22}>
+                    <Title>Педагоги</Title>
+                </Col>
+                <Col span={1}>
+                    <Button type='primary' onClick={() => setOpenAddTeacher(true)}>
+                        Добавить педагога
+                    </Button>
+                </Col>
+            </Row>
+            <Row>
+                <Col span={24}>
+                    <List
+                        loading={loading}
+                        bordered
+                        size='large'
+                        dataSource={GetAllTeachers?.teachers}
+                        pagination={{
+                            onChange: onChangePage,
+                            total: GetAllTeachers?.countRows,
+                            current: +currentPage,
+                            defaultCurrent: 1,
+                            defaultPageSize: pageSize,
+                            responsive: true,
+                        }}
+                        itemLayout='vertical'
+                        renderItem={({ userHttp }, index) => (
+                            <ListItem
+                                itemIndex={index}
+                                handleDelete={teacherIndex => actions.deleteTeacher(userHttp.id, teacherIndex)}
+                                label={`${userHttp.lastname} ${userHttp.firstname} ${userHttp.middlename}`}
+                                key={index}
+                                render={(open, setOpen) => (
+                                    <DragResize
+                                        open={open} setOpen={setOpen}
+                                        content={() => (
+                                            <TeacherContent teacherId={userHttp.id} />
+                                        )}
+                                    />
+                                )}
+                            />
+                        )}
                     />
-                </Flex>
-                {
-                    loading ? <Loader />
-                        : (
-                            <Flex
-                                widht='100%' direction='column'
-                                justify=' center'
-                            >
-                                <Flex direction='column'>
-                                    {
-                                        teachers?.map((teacher, index) => {
-                                            return (
-                                                <ListItem
-                                                    itemIndex={index}
-                                                    key={index}
-                                                    label={`${teacher.userHttp.lastname} ${teacher.userHttp.firstname} ${teacher.userHttp.middlename}`}
-                                                    handleDelete={teacherIndex => deleteTeacher(token, teacher.userHttp.id, teacherIndex)}
-                                                    render={(open, setOpen) => (
-                                                        <ModalWindow
-                                                            open={open} setOpen={setOpen}
-                                                            width='65%' height='80%'
-                                                            content={() => (
-                                                                <TeacherContent teacher={teacher.userHttp} />
-                                                            )}
-                                                        />
-                                                    )}
-                                                />
-                                            )
-                                        })
-                                    }
-                                </Flex>
-                            </Flex>
-                        )
-                }
-            </Card>
+                </Col>
+            </Row>
         </PageLayout >
-
     )
 }
+
+export default Teachers

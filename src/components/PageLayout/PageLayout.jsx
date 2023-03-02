@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Layout } from 'antd'
+import { Col, Layout, Row } from 'antd'
 
 import {
     MenuFoldOutlined,
@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons'
 
 import SideBar from '@/components/SideBar'
+import SelectLanguage from '@/components/SelectLanguage'
 
 const { Header, Sider, Content } = Layout
 
@@ -22,12 +23,20 @@ const PageLayout = ({ children }) => {
             </Sider>
             <Layout>
                 <Header style={{ backgroundColor: 'green' }}>
-                    {
-                        React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                            className: 'trigger',
-                            onClick: () => setCollapsed(!collapsed),
-                        })
-                    }
+                    <Row justify='space-between' align='middle'>
+                        <Col span={12}>
+                            {
+                                React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                                    className: 'trigger',
+                                    onClick: () => setCollapsed(!collapsed),
+                                })
+                            }
+                        </Col>
+                        <Col span={12}>
+                            <SelectLanguage />
+                        </Col>
+                    </Row>
+
                 </Header>
                 <Content style={{ padding: '0 1rem' }}>
                     {

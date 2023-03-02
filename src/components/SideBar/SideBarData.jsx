@@ -1,10 +1,9 @@
 import React from 'react'
-import * as FaIcons from 'react-icons/fa'
+import { FormattedMessage } from 'react-intl'
 
 import {
   UserOutlined,
   BookOutlined,
-  CreditCardOutlined,
   LogoutOutlined,
   ProjectOutlined,
 } from '@ant-design/icons'
@@ -19,43 +18,25 @@ import {
 export const SidebarDataStudent = [
   {
     key: '1',
-    label: 'Профиль',
+    label: <FormattedMessage id='sidebar_data.profile' />,
     pathname: PROFILE_PAGE_ROUTE,
     icon: <UserOutlined />,
   },
   {
     key: '2',
-    label: 'Мои проекты',
+    label: <FormattedMessage id='sidebar_data.my_projects' />,
     pathname: MY_PROJECTS_ROUTE,
     icon: <ProjectOutlined />,
   },
   {
     key: '3',
-    label: 'Платежи',
-    pathname: '/payments',
-    icon: <CreditCardOutlined />,
-  },
-  {
-    key: '4',
-    label: 'Программа',
-    pathname: '/program',
-    icon: <FaIcons.FaTasks />,
-  },
-  {
-    key: '5',
-    label: 'Мои курсы',
+    label: <FormattedMessage id='sidebar_data.my_courses' />,
     pathname: MY_COURSES_ROUTE,
     icon: <BookOutlined />,
   },
   {
-    key: '6',
-    label: 'Информер',
-    pathname: '/informer',
-    icon: <FaIcons.FaInfo />,
-  },
-  {
-    key: '7',
-    label: 'Выйти',
+    key: '4',
+    label: <FormattedMessage id='sidebar_data.logout' />,
     pathname: LOGIN_PAGE_ROUTE,
     icon: <LogoutOutlined />,
   },

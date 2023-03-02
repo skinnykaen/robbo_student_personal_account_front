@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions'
-import { toast } from 'react-toastify'
 
 import {
     SIGN_IN_SUCCESS, SIGN_IN_FAILED, SIGN_IN,
@@ -24,7 +23,6 @@ export const signInSucces = createAction(SIGN_IN_SUCCESS, response => {
 })
 
 export const signInFailed = createAction(SIGN_IN_FAILED, error => {
-    toast.error(error)
     return {
         error,
     }

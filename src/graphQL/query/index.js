@@ -1,2 +1,5 @@
 export * from './user'
 export * from './projectPage'
+export * from './student'
+export * from './profile'
+export * from './coursePage'

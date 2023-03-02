@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { Spin } from 'antd'
 
 import {
   HOME_PAGE_ROUTE,
@@ -9,9 +10,9 @@ import {
   MY_COURSES_ROUTE,
   COURSE_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE,
+  STUDENT,
 } from '@/constants'
-
-import Loader from '@/components/Loader'
+import { ProtectedRoute } from '@/helpers'
 
 const HomePage = lazy(() => import('@/pages/Home'))
 const LoginPage = lazy(() => import('@/pages/Login'))
@@ -23,11 +24,14 @@ const ProfilePage = lazy(() => import('@/pages/Profile'))
 
 export default () => {
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Spin />}>
       <Routes>
         <Route
           path={HOME_PAGE_ROUTE}
-          element={<HomePage />}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT]}>
+              <HomePage />
+            </ProtectedRoute>}
         />
         <Route
           path={LOGIN_PAGE_ROUTE}
@@ -35,23 +39,43 @@ export default () => {
         />
         <Route
           path={MY_PROJECTS_ROUTE}
-          element={<MyProjects />}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT]}>
+              <MyProjects />
+            </ProtectedRoute>
+          }
         />
         <Route
           path={PROJECT_PAGE_ROUTE}
-          element={<ProjectPage />}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT]}>
+              <ProjectPage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path={MY_COURSES_ROUTE}
-          element={<MyCourses />}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT]}>
+              <MyCourses />
+            </ProtectedRoute>
+          }
         />
         <Route
           path={COURSE_PAGE_ROUTE}
-          element={<CoursePage />}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT]}>
+              <CoursePage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path={PROFILE_PAGE_ROUTE}
-          element={<ProfilePage />}
+          element={
+            <ProtectedRoute allowedRoles={[STUDENT]}>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path='/'

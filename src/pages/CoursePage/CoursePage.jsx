@@ -1,36 +1,31 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { redirect, useParams } from 'react-router-dom'
-import { Button } from 'antd'
-
-import { Title, Avatar, Description } from './components'
+import { useParams } from 'react-router-dom'
+import { Button, Row, Col, Typography, Avatar, Spin } from 'antd'
+import { FormattedMessage } from 'react-intl'
 
 import PageLayout from '@/components/PageLayout'
-import Flex from '@/components/Flex'
-import Loader from '@/components/Loader'
 import { getCoursePage, getCoursePageLoading } from '@/reducers/coursePage'
-import { checkAccess, useUserIdentity, courseDescriptionParser, useActions } from '@/helpers'
+import { courseDescriptionParser } from '@/helpers'
+import { useActions } from '@/helpers/useActions'
 import { getCoursePageById, clearCoursePageState } from '@/actions'
 import {
-    HOME_PAGE_ROUTE,
-    LOGIN_PAGE_ROUTE,
     EDX_TEST_COURSES_ADDRESS,
-    STUDENT,
-    SUPER_ADMIN,
 } from '@/constants'
 
-export default () => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
+const { Title } = Typography
 
+export default ({ userRole }) => {
     const token = localStorage.getItem('token')
     const { coursePageId } = useParams()
     const actions = useActions({ getCoursePageById, clearCoursePageState }, [])
 
     useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN]))
-            actions.getCoursePageById(token, coursePageId)
-        return () => actions.clearCoursePageState()
-    }, [loginLoading])
+        actions.getCoursePageById(token, coursePageId)
+        return () => {
+            actions.clearCoursePageState()
+        }
+    }, [])
 
     const loading = useSelector(state => getCoursePageLoading(state.coursePage))
     const coursePage = useSelector(state => getCoursePage(state.coursePage))
@@ -39,41 +34,72 @@ export default () => {
         window.open(EDX_TEST_COURSES_ADDRESS + coursePage.course_id + '/about')
     }
 
-    if (!loginLoading && !checkAccess(userRole, [STUDENT, SUPER_ADMIN])) {
-        return redirect(HOME_PAGE_ROUTE)
-    } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
-    }
-
-
     return (
         <PageLayout>
             {
-                loading || loginLoading
-                    ? <Loader />
+                loading
+                    ? <Spin />
                     : (
-                        <Flex padding='2rem' direction='column'>
-                            <Title>{coursePage.name}</Title>
-                            <Flex direction='row'>
-                                <Flex direction='column' margin='0 1rem 0 0'
-                                    style={{ maxWidth: '250px' }}>
-                                    <Avatar src={coursePage.media.image.large} />
-                                    <Button onClick={openCourseButtonHandler}>Открыть курс</Button>
-                                    <Button>Прогресс</Button>
-                                    <Button>Внешние источники</Button>
-                                    <Button>Связь с преподавателем</Button>
-                                </Flex>
-                                <Flex direction='column'>
-                                    <Flex direction='column'>
-                                        <h4>Описание курса</h4>
-                                        <Description>
-                                            {courseDescriptionParser(coursePage)}
-                                        </Description>
+                        <React.Fragment>
+                            <Row align='middle'>
+                                <Col span={22}>
+                                    <Title>{coursePage.name}</Title>
+                                </Col>
+                            </Row>
+                            <Row gutter={[8, 8]}>
+                                <Col span={4}>
+                                    <Row gutter={[0, 16]}>
+                                        <Col span={24}>
+                                            <Avatar shape='square' size={128}
+                                                src={coursePage?.media?.image?.large}
+                                            />
+                                        </Col>
+                                        <Col span={24}>
+                                            <Button
+                                                type='primary' size='large'
+                                                onClick={openCourseButtonHandler}
+                                            >
+                                                <FormattedMessage id='course_page.open_course' />
+                                            </Button>
+                                        </Col>
+                                        <Col span={24}>
+                                            <Button
+                                                type='primary' size='large'
+                                            >
+                                                <FormattedMessage id='course_page.progress' />
+                                            </Button>
+                                        </Col>
+                                        <Col span={24}>
+                                            <Button
+                                                type='primary' size='large'
+                                            >
+                                                <FormattedMessage id='course_page.external_sources' />
+                                            </Button>
+                                        </Col>
+                                        <Col span={24}>
+                                            <Button
+                                                type='primary' size='large'
+                                            >
+                                                <FormattedMessage id='course_page.communication_with_the_teacher' />
+                                            </Button>
+                                        </Col>
+                                    </Row>
 
-                                    </Flex>
-                                </Flex>
-                            </Flex>
-                        </Flex>
+                                </Col>
+                                <Col span={20}>
+                                    <Row>
+                                        <Title level={3}>
+                                            <FormattedMessage id='course_page.course_description' />
+                                        </Title>
+                                    </Row>
+                                    <Row>
+                                        <Title level={5}>
+                                            {courseDescriptionParser(coursePage)}
+                                        </Title>
+                                    </Row>
+                                </Col>
+                            </Row>
+                        </React.Fragment>
                     )
 
             }

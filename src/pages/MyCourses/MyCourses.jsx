@@ -1,60 +1,63 @@
-import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { redirect } from 'react-router-dom'
-
-import { WelcomeText } from './components'
-import CoursePageItem from './MyCoursesItem'
+import React from 'react'
+import { Col, Row, Typography, List } from 'antd'
+import { useNavigate } from 'react-router-dom'
+import { FormattedMessage } from 'react-intl'
 
 import PageLayout from '@/components/PageLayout'
-import Loader from '@/components/Loader'
-import { getAllCoursePages, clearAllCoursePagesState } from '@/actions'
-import { getCoursePages, getCoursePagesLoading } from '@/reducers/myCourses'
-import Flex from '@/components/Flex'
-import { HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE, STUDENT, SUPER_ADMIN } from '@/constants'
-import { checkAccess, useActions, useUserIdentity } from '@/helpers'
+import ListItem from '@/components/ListItem'
 
-export default () => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
+const { Title } = Typography
 
-    const actions = useActions({ getAllCoursePages, clearAllCoursePagesState }, [])
-    const token = localStorage.getItem('token')
-    useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [STUDENT, SUPER_ADMIN]))
-            actions.getAllCoursePages(token)
-        return () => actions.clearAllCoursePagesState()
-    }, [loginLoading])
-
-    const coursePages = useSelector(({ myCourses }) => getCoursePages(myCourses))
-    const loading = useSelector(({ myCourses }) => getCoursePagesLoading(myCourses))
-
-    if (!loginLoading && !checkAccess(userRole, [STUDENT, SUPER_ADMIN])) {
-        return redirect(HOME_PAGE_ROUTE)
-    } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
-    }
+const MyCourses = ({
+    data: {
+        GetCoursesByUser,
+        loading,
+    },
+    pageSize,
+    currentPage,
+    onChangePage,
+}) => {
+    const navigate = useNavigate()
 
     return (
         <PageLayout>
-            {
-                loginLoading ? <Loader />
-                    : (
-                        <Flex direction='column' align='center'>
-                            <WelcomeText>Мои Курсы</WelcomeText>
-                            {
-                                loading
-                                    ? <Loader />
-                                    : coursePages?.map((coursePage, index) => {
-                                        return (
-                                            <CoursePageItem
-                                                coursePage={coursePage}
-                                                key={index}
-                                            />
-                                        )
-                                    })
-                            }
-                        </Flex>
-                    )
-            }
+            <Row align='middle'>
+                <Col span={24}>
+                    <Title>
+                        <FormattedMessage id='my_courses.title' />
+                    </Title>
+                </Col>
+            </Row>
+            <Row>
+                <Col span={24}>
+                    <List
+                        loading={loading}
+                        bordered
+                        size='large'
+                        dataSource={GetCoursesByUser?.results}
+                        pagination={{
+                            onChange: onChangePage,
+                            total: GetCoursesByUser?.countRows || 10,
+                            current: +currentPage,
+                            defaultCurrent: 1,
+                            defaultPageSize: pageSize,
+                            responsive: true,
+                        }}
+                        itemLayout='vertical'
+                        renderItem={(coursePage, index) => (
+                            <ListItem
+                                itemIndex={index}
+                                key={index}
+                                label={`${coursePage.name}`}
+                                handleClick={() => navigate(`/courses/${coursePage.id}`)}
+                                render={(open, setOpen) => { }}
+                            />
+                        )}
+                    />
+                </Col>
+            </Row>
         </PageLayout>
     )
 }
+
+export default MyCourses

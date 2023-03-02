@@ -1,21 +1,55 @@
-import React, { memo, useState, useEffect } from 'react'
-import { Button, Form, Input } from 'antd'
+import React, { memo } from 'react'
+import { Button, Form, Input, notification } from 'antd'
 import { PropTypes } from 'prop-types'
+import { useMutation } from '@apollo/client'
+import { useNavigate } from 'react-router-dom'
+import { useIntl, FormattedMessage } from 'react-intl'
 
 import { LockOutlined, MailOutlined } from '@ant-design/icons'
+
+import {
+    HOME_PAGE_ROUTE,
+    STUDENT,
+} from '@/constants'
+import { authMutationsGQL } from '@/graphQL'
+
 
 const SignInForm = memo(({
     handleSubmit,
     needSelectRole,
 }) => {
+    const intl = useIntl()
     const [form] = Form.useForm()
-    console.log(handleSubmit)
+    const navigate = useNavigate()
+
+    const [login] = useMutation(authMutationsGQL.SIGN_IN, {
+        onCompleted: ({ SingIn }) => {
+            localStorage.setItem('token', SingIn.accessToken)
+            navigate(HOME_PAGE_ROUTE)
+        },
+        onError: error => {
+            notification.error({
+                message: intl.formatMessage({ id: 'notification.error_message' }),
+                description: error?.message,
+            })
+        },
+    })
+
+
     return (
         <Form
             name='normal_login'
             className='login-form'
             onFinish={({ email, password }) => {
-                return handleSubmit({ email, password, role: 0 })
+                login({
+                    variables: {
+                        input: {
+                            email,
+                            password,
+                            userRole: STUDENT,
+                        },
+                    },
+                })
             }}
             form={form}
         >
@@ -24,12 +58,13 @@ const SignInForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите ваш Email!',
+                        message: <FormattedMessage id='sign_up_form.email_rule' />,
                     },
                 ]}
             >
                 <Input
-                    prefix={<MailOutlined className='site-form-item-icon' />} placeholder='Email'
+                    prefix={<MailOutlined className='site-form-item-icon' />}
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.email_placeholder' })}
                     size='large'
                 />
             </Form.Item>
@@ -38,17 +73,18 @@ const SignInForm = memo(({
                 rules={[
                     {
                         required: true,
-                        message: 'Пожалуйста, введите ваш Пароль!',
+                        message: <FormattedMessage id='sign_up_form.password_rule' />,
                     },
                 ]}
             >
                 <Input
                     prefix={<LockOutlined className='site-form-item-icon' />}
                     type='password'
-                    placeholder='Пароль'
+                    placeholder={intl.formatMessage({ id: 'sign_up_form.password_placeholder' })}
                     size='large'
                 />
             </Form.Item>
+
             <Form.Item shouldUpdate>
                 {
                     () => (
@@ -60,11 +96,10 @@ const SignInForm = memo(({
                                 !!form.getFieldsError().filter(({ errors }) => errors.length).length
                             }
                         >
-                            Войти
+                            <FormattedMessage id='sign_in_form.sign_in' />
                         </Button>
                     )
                 }
-
             </Form.Item>
         </Form >
     )

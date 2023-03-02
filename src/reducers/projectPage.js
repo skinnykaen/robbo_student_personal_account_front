@@ -41,4 +41,4 @@ export default handleActions({
     },
 }, INITIAL_STATE)
 
-export const getProjectPage = state => state
+export const getProjectPageState = state => state

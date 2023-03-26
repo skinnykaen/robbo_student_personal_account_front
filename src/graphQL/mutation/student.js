@@ -54,6 +54,17 @@ export const studentMutationsGQL = {
         }
     }
     `,
+
+
+    SET_ACTIVE_FOR_STUDENT: gql`
+        mutation SetActiveForStudent($studentId: String!, $active: Boolean!){
+            SetActiveForStudent(studentId: $studentId, active: $active){
+            ... on Error {
+                message
+            }
+        }
+        }
+    `,
 }
 
 export const studentMutationsGraphQL = {

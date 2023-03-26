@@ -23,7 +23,7 @@ export const Title = styled.a`
     }
 `
 export const DeleteButton = styled.button`
-    font-size: 20px;
+    font-size: 28px;
     padding: 1rem;
     background: none;
     border: none;

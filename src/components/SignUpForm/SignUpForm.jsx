@@ -5,6 +5,9 @@ import { PropTypes } from 'prop-types'
 const SignUpForm = memo(({
     handleSubmit,
     needSelectRole,
+    robboUnitId,
+    robboGroupId,
+    parentId,
 }) => {
     const [form] = Form.useForm()
     const [, forceUpdate] = useState({})
@@ -16,17 +19,30 @@ const SignUpForm = memo(({
         <Form
             name='normal_login'
             className='signup-form'
-            onFinish={({ email,
-                password,
-                role,
-                nickname,
-                lastname,
-                firstname,
-                middlename,
-            }) => {
-                return handleSubmit({
-                    email, password, nickname, lastname, firstname, middlename,
-                }, 0)
+            onFinish={(
+                {
+                    email,
+                    password,
+                    nickname,
+                    lastname,
+                    firstname,
+                    middlename,
+                }) => {
+                handleSubmit({
+                    variables: {
+                        input: {
+                            email,
+                            password,
+                            nickname,
+                            lastname,
+                            firstname,
+                            middlename,
+                            robboUnitId,
+                            robboGroupId,
+                            parentId,
+                        },
+                    },
+                })
             }}
             form={form}
         >

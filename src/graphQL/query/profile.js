@@ -15,6 +15,7 @@ export const profileGQL = {
                         email
                         createdAt
                         role
+                        active
                     }
                     robboGroupId
                     robboUnitId

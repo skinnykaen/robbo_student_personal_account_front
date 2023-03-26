@@ -16,11 +16,28 @@ export const studentQuerysGQL = {
                         email
                         createdAt
                         role
+                        active
                     }
                 }
                 ... on Error {
                     message
                 }
+            }
+        }
+    `,
+
+    GET_ALL_STUDENTS: gql`
+        query GetAllStudents($page: String!, $pageSize: String!, $active: Boolean!) {
+            GetAllStudents(page: $page, pageSize: $pageSize, active: $active) {
+                students{
+                        userHttp{
+                        id
+                        lastname
+                        firstname
+                        middlename
+                    }
+                }
+                countRows
             }
         }
     `,

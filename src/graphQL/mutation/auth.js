@@ -4,9 +4,9 @@ import { graphQLClient } from "@/graphQL"
 
 export const authMutationsGQL = {
     SIGN_IN: gql`
-        mutation SingIn($input: SignInInput!){
-            SingIn(input: $input) {
-                ... on SingInResponse {
+        mutation SignIn($input: SignInInput!){
+            SignIn(input: $input) {
+                ... on SignInResponse {
                     accessToken
                 }
             }
@@ -16,24 +16,34 @@ export const authMutationsGQL = {
     REFRESH_TOKEN: gql`
         mutation {
             Refresh{
-                ... on SingInResponse {
+                ... on SignInResponse {
                     accessToken
                 }
             }
         }
     `,
 
-    SING_OUT: gql`
+    SIGN_OUT: gql`
         mutation{
-            SingOut{
+            SignOut{
                 message
+            }
+        }
+    `,
+
+    SIGN_UP_REQUEST: gql`
+        mutation SignUpRequest($input: NewStudent!) {
+            SignUpRequest(input: $input){
+                ... on Error{
+                    message
+                }
             }
         }
     `,
 }
 
 export const authMutationsGraphQL = {
-    SingIn(email, password, userRole) {
+    SignIn(email, password, userRole) {
         return graphQLClient.mutate(
             {
                 mutation: authMutationsGQL.SIGN_IN,

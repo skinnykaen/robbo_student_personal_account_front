@@ -1,12 +1,13 @@
 import React from 'react'
 import { PropTypes } from 'prop-types'
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, Switch } from 'antd'
 import { FormattedMessage } from 'react-intl'
 
 import { userRole } from '@/constants'
 
 const ProfileCard = ({
     updateHandle,
+    setActiveHandle,
     profile,
     accessUpdate,
 }) => {
@@ -25,7 +26,7 @@ const ProfileCard = ({
         <Form
             name='normal_profile'
             className='profile-form'
-            onFinish={({ email, nickname, middlename, firstname, lastname }) => {
+            onFinish={({ email, nickname, middlename, firstname, lastname, active }) => {
                 updateHandle(
                     {
                         variables: {
@@ -36,6 +37,7 @@ const ProfileCard = ({
                                 firstname,
                                 lastname,
                                 nickname,
+                                active,
                             },
                         },
                     })
@@ -48,6 +50,7 @@ const ProfileCard = ({
                 firstname: profile.firstname,
                 lastname: profile.lastname,
                 middlename: profile.middlename,
+                active: profile.active,
             }}
             disabled={isFormDisable}
         >
@@ -86,6 +89,17 @@ const ProfileCard = ({
                     profile.createdAt
                 }
             </Form.Item>
+            <Form.Item name='active' label={<FormattedMessage id='profile_card.active' />}>
+                <Switch defaultChecked={profile.active}
+                    onChange={() =>
+                        setActiveHandle({
+                            variables: {
+                                studentId: profile.id,
+                                active: !profile.active,
+                            },
+                        })}
+                />
+            </Form.Item>
             {
                 !isFormDisable &&
                 <Form.Item >
@@ -111,8 +125,10 @@ ProfileCard.propTypes = {
         middlename: PropTypes.string,
         role: PropTypes.number,
         createdAt: PropTypes.string,
+        active: PropTypes.active,
     }),
     updateHandle: PropTypes.func,
+    setActiveHandle: PropTypes.func,
     accessUpdate: PropTypes.bool,
 }
 

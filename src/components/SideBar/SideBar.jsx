@@ -4,12 +4,12 @@ import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
 
 import {
-    SidebarDataStudent,
+    SidebarDataStudent, SidebarDataSuperAdmin,
 } from './SideBarData.jsx'
 
 import { authMutationsGQL, graphQLClient } from '@/graphQL/index.js'
 import { parseJwt } from '@/helpers'
-import { LOGIN_PAGE_ROUTE } from '@/constants'
+import { LOGIN_PAGE_ROUTE, STUDENT, SUPER_ADMIN } from '@/constants'
 
 export default ({ selectedNavBarKey = '1' }) => {
     const navigate = useNavigate()
@@ -17,14 +17,18 @@ export default ({ selectedNavBarKey = '1' }) => {
     const { Role } = parseJwt(token)
     let SideBarData = []
     switch (Role) {
-        case 0: {
+        case STUDENT: {
             SideBarData = SidebarDataStudent
+            break
+        }
+        case SUPER_ADMIN: {
+            SideBarData = SidebarDataSuperAdmin
             break
         }
     }
 
-    const [loginOut] = useMutation(authMutationsGQL.SING_OUT, {
-        onCompleted: ({ SingIn }) => {
+    const [loginOut] = useMutation(authMutationsGQL.SIGN_OUT, {
+        onCompleted: () => {
             graphQLClient.resetStore()
             localStorage.removeItem('token')
             navigate(LOGIN_PAGE_ROUTE)

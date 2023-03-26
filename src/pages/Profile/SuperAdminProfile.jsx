@@ -1,19 +1,18 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
-import { Row, Typography, Skeleton } from 'antd'
+import { Row, Skeleton, Typography } from 'antd'
 
 import PageLayout from '@/components/PageLayout'
 import ProfileCard from '@/components/ProfileCard'
 
 const { Title } = Typography
 
-const StudentProfile = ({
+const SuperAdminProfile = ({
     data: {
         GetUser,
         loading,
     },
-    UpdateStudent,
-    SetActive,
+    UpdateSuperAdmin,
     accessUpdate,
 }) => {
     return (
@@ -25,14 +24,14 @@ const StudentProfile = ({
                 <Skeleton active loading={loading}>
                     <ProfileCard
                         profile={GetUser?.userHttp}
-                        updateHandle={UpdateStudent}
-                        setActiveHandle={SetActive}
+                        updateHandle={UpdateSuperAdmin}
                         accessUpdate={accessUpdate}
                     />
                 </Skeleton>
             </Row>
         </PageLayout>
+
     )
 }
 
-export default StudentProfile
+export default SuperAdminProfile

@@ -1,57 +1,56 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams, redirect } from 'react-router-dom'
-import { Input, Button, Form, Switch, notification, Spin, Row, Col } from 'antd'
+import { useParams } from 'react-router-dom'
+import { FormattedMessage } from 'react-intl'
+import { Input, Button, Form, Switch, Spin, Row, Col } from 'antd'
 
 import { getProjectPageById, clearProjectPageState, updateProjectPage } from '@/actions'
-import { checkAccess, useUserIdentity, useActions } from '@/helpers'
-import { STUDENT, HOME_PAGE_ROUTE, LOGIN_PAGE_ROUTE } from '@/constants'
-import { getProjectPagesState } from '@/reducers/myProjects'
 import PageLayout from '@/components/PageLayout'
 
 import config from '@/config'
+import { useActions } from '@/helpers'
+
+import { getProjectPageState } from '@/reducers/projectPage'
 
 const { TextArea } = Input
 
 const ProjectPage = () => {
-    const { userRole, isAuth, loginLoading } = useUserIdentity()
-    const [form] = Form.useForm()
-    const { projectPageId } = useParams()
-
     const actions = useActions({
         getProjectPageById,
         clearProjectPageState,
         updateProjectPage,
     }, [])
 
-    useEffect(() => {
-        if (!loginLoading && checkAccess(userRole, [STUDENT]))
-            actions.getProjectPageById(projectPageId)
-        return () => actions.clearProjectPageState()
-    }, [loginLoading])
-
-    const { projectPage, loading, err } = useSelector(({ projectPage }) => getProjectPagesState(projectPage))
-
-    if (!loginLoading && !checkAccess(userRole, [STUDENT])) {
-        return redirect(HOME_PAGE_ROUTE)
-    } else if (!isAuth && !loginLoading) {
-        return redirect(LOGIN_PAGE_ROUTE)
+    const layout = {
+        labelCol: {
+            span: 8,
+        },
+        wrapperCol: {
+            span: 16,
+        },
     }
+    const [form] = Form.useForm()
+    const { projectPageId } = useParams()
 
-    const seeInsideHandler = () => { window.open(config.scratchURL + `?#${projectPageId}`) }
+    useEffect(() => {
+        actions.getProjectPageById(projectPageId)
+        return () => {
+            actions.clearProjectPageState()
+        }
+    }, [])
 
-    if (!loading && err !== null) {
-        notification.error({ message: 'Ошибка', description: err })
+    const { projectPage, loading } = useSelector(({ projectPage }) => getProjectPageState(projectPage))
+
+    const seeInsideHandler = () => {
+        window.open(config.scratchURL + `?#${projectPageId}`)
     }
 
     return (
         <PageLayout>
-            {loading
-                ? <Spin />
+            {loading ? <Spin />
                 : (
                     <Row align='start'>
-
-                        <Col>
+                        <Col span={12}>
                             <Form
                                 name='normal_project-page'
                                 className='project-page-form'
@@ -75,31 +74,35 @@ const ProjectPage = () => {
                                 }}
                             >
                                 <Form.Item
-                                    name='title' placeholder={projectPage.title}
-                                    label='Название'
+                                    name='title'
+                                    placeholder={projectPage.title}
+                                    label={<FormattedMessage id='project_page.title' />}
                                 >
                                     <Input size='large' />
                                 </Form.Item>
                                 <Form.Item
                                     name='instruction' placeholder={projectPage.title}
-                                    label='Инструкция'
+                                    label={<FormattedMessage id='project_page.instruction' />}
                                 >
                                     <TextArea size='large' rows={4} />
                                 </Form.Item>
                                 <Form.Item
                                     name='notes' placeholder={projectPage.title}
-                                    label='Примечание'
+                                    label={<FormattedMessage id='project_page.description' />}
                                 >
                                     <TextArea size='large' rows={4} />
                                 </Form.Item>
-                                <Form.Item label='Последнее обновление'>
+                                <Form.Item
+                                    label={<FormattedMessage id='project_page.last_change' />}
+                                >
                                     {projectPage.lastModified}
                                 </Form.Item>
                                 {
                                     projectPage.isShared
                                         ? (
                                             <Form.Item
-                                                name='isShared' label='Закрыть доступ'
+                                                name='isShared'
+                                                label={<FormattedMessage id='project_page.close_access' />}
                                                 valuePropName='checked'
                                             >
                                                 <Switch defaultChecked onChange={() => { }} />
@@ -107,7 +110,8 @@ const ProjectPage = () => {
                                         )
                                         : (
                                             <Form.Item
-                                                name='isShared' label='Открыть доступ'
+                                                name='isShared'
+                                                label={<FormattedMessage id='project_page.open_access' />}
                                                 valuePropName='checked'
                                             >
                                                 <Switch onChange={() => { }} />
@@ -119,20 +123,20 @@ const ProjectPage = () => {
                                         type='primary' htmlType='submit'
                                         className='login-form-button'
                                     >
-                                        Сохранить
+                                        <FormattedMessage id='project_page.save' />
                                     </Button>
                                 </Form.Item>
                             </Form>
                             <Button
                                 type='primary' onClick={seeInsideHandler}
                             >
-                                Открыть в Robbo Scratch
+                                <FormattedMessage id='project_page.open_in_scratch' />
                             </Button>
                         </Col>
                     </Row>
                 )
             }
-        </PageLayout>
+        </PageLayout >
     )
 }
 

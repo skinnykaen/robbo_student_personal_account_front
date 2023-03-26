@@ -23,8 +23,8 @@ const SignInForm = memo(({
     const navigate = useNavigate()
 
     const [login] = useMutation(authMutationsGQL.SIGN_IN, {
-        onCompleted: ({ SingIn }) => {
-            localStorage.setItem('token', SingIn.accessToken)
+        onCompleted: ({ SignIn }) => {
+            localStorage.setItem('token', SignIn.accessToken)
             navigate(HOME_PAGE_ROUTE)
         },
         onError: error => {

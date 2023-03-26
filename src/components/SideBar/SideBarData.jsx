@@ -6,6 +6,7 @@ import {
   BookOutlined,
   LogoutOutlined,
   ProjectOutlined,
+  TeamOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -13,6 +14,7 @@ import {
   MY_PROJECTS_ROUTE,
   MY_COURSES_ROUTE,
   PROFILE_PAGE_ROUTE,
+  STUDENTS_PAGE_ROUTE,
 } from '@/constants'
 
 export const SidebarDataStudent = [
@@ -33,6 +35,33 @@ export const SidebarDataStudent = [
     label: <FormattedMessage id='sidebar_data.my_courses' />,
     pathname: MY_COURSES_ROUTE,
     icon: <BookOutlined />,
+  },
+  {
+    key: '4',
+    label: <FormattedMessage id='sidebar_data.logout' />,
+    pathname: LOGIN_PAGE_ROUTE,
+    icon: <LogoutOutlined />,
+  },
+]
+
+export const SidebarDataSuperAdmin = [
+  {
+    key: '1',
+    label: <FormattedMessage id='sidebar_data.profile' />,
+    pathname: PROFILE_PAGE_ROUTE,
+    icon: <UserOutlined />,
+  },
+  {
+    key: '2',
+    label: <FormattedMessage id='sidebar_data.my_projects' />,
+    pathname: MY_PROJECTS_ROUTE,
+    icon: <ProjectOutlined />,
+  },
+  {
+    key: '3',
+    label: <FormattedMessage id='sidebar_data.students' />,
+    pathname: STUDENTS_PAGE_ROUTE,
+    icon: <TeamOutlined />,
   },
   {
     key: '4',

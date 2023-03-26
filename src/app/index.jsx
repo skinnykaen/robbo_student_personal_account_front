@@ -11,6 +11,8 @@ import {
   COURSE_PAGE_ROUTE,
   PROFILE_PAGE_ROUTE,
   STUDENT,
+  SUPER_ADMIN,
+  STUDENTS_PAGE_ROUTE,
 } from '@/constants'
 import { ProtectedRoute } from '@/helpers'
 
@@ -21,6 +23,7 @@ const ProjectPage = lazy(() => import('@/pages/ProjectPage'))
 const MyCourses = lazy(() => import('@/pages/MyCourses'))
 const CoursePage = lazy(() => import('@/pages/CoursePage'))
 const ProfilePage = lazy(() => import('@/pages/Profile'))
+const StudentsPage = lazy(() => import('@/pages/Students'))
 
 export default () => {
   return (
@@ -29,7 +32,7 @@ export default () => {
         <Route
           path={HOME_PAGE_ROUTE}
           element={
-            <ProtectedRoute allowedRoles={[STUDENT]}>
+            <ProtectedRoute allowedRoles={[STUDENT, SUPER_ADMIN]}>
               <HomePage />
             </ProtectedRoute>}
         />
@@ -40,7 +43,7 @@ export default () => {
         <Route
           path={MY_PROJECTS_ROUTE}
           element={
-            <ProtectedRoute allowedRoles={[STUDENT]}>
+            <ProtectedRoute allowedRoles={[STUDENT, SUPER_ADMIN]}>
               <MyProjects />
             </ProtectedRoute>
           }
@@ -48,7 +51,7 @@ export default () => {
         <Route
           path={PROJECT_PAGE_ROUTE}
           element={
-            <ProtectedRoute allowedRoles={[STUDENT]}>
+            <ProtectedRoute allowedRoles={[STUDENT, SUPER_ADMIN]}>
               <ProjectPage />
             </ProtectedRoute>
           }
@@ -56,7 +59,7 @@ export default () => {
         <Route
           path={MY_COURSES_ROUTE}
           element={
-            <ProtectedRoute allowedRoles={[STUDENT]}>
+            <ProtectedRoute allowedRoles={[STUDENT, SUPER_ADMIN]}>
               <MyCourses />
             </ProtectedRoute>
           }
@@ -64,7 +67,7 @@ export default () => {
         <Route
           path={COURSE_PAGE_ROUTE}
           element={
-            <ProtectedRoute allowedRoles={[STUDENT]}>
+            <ProtectedRoute allowedRoles={[STUDENT, SUPER_ADMIN]}>
               <CoursePage />
             </ProtectedRoute>
           }
@@ -72,8 +75,16 @@ export default () => {
         <Route
           path={PROFILE_PAGE_ROUTE}
           element={
-            <ProtectedRoute allowedRoles={[STUDENT]}>
+            <ProtectedRoute allowedRoles={[STUDENT, SUPER_ADMIN]}>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={STUDENTS_PAGE_ROUTE}
+          element={
+            <ProtectedRoute allowedRoles={[SUPER_ADMIN]}>
+              <StudentsPage />
             </ProtectedRoute>
           }
         />

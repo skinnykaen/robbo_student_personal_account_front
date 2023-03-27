@@ -3,6 +3,27 @@ import { gql } from '@apollo/client'
 import { graphQLClient } from '@/graphQL'
 
 export const projectPageQueryGQL = {
+
+    GET_PROJECT_PAGES_BY_USER_ID: gql`
+     query GetAllProjectPagesByUserID($userID: String!, $page: String!, $pageSize: String!) {
+        GetAllProjectPagesByUserID(userID: $userID, page: $page, pageSize: $pageSize) {
+            ... on ProjectPageHttpList {
+                    projectPages{
+                        title
+                        linkScratch
+                        projectPageId
+                        projectId
+                        lastModified
+                    }
+                    countRows
+                }
+                ... on Error {
+                    message
+                }
+        }
+     }
+    `,
+
     GET_PROJECT_PAGES_BY_ACCESS_TOKEN: gql`
         query GetAllProjectPagesByAccessToken($page: String!, $pageSize: String!){
             GetAllProjectPagesByAccessToken(page: $page, pageSize: $pageSize){ 

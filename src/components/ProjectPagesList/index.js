@@ -1,0 +1,2 @@
+import ProjectPagesListContainer from "./ProjectPagesList"
+export default ProjectPagesListContainer

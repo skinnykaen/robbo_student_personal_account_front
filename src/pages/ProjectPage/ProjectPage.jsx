@@ -97,6 +97,12 @@ const ProjectPage = () => {
                                 >
                                     {projectPage.lastModified}
                                 </Form.Item>
+                                <Form.Item
+                                    // label={<FormattedMessage id='project_page.last_change' />}
+                                    label='Последнее изменение проекта'
+                                >
+                                    {projectPage.projectLastModified}
+                                </Form.Item>
                                 {
                                     projectPage.isShared
                                         ? (

@@ -59,6 +59,7 @@ export const projectPageQueryGQL = {
                     linkScratch
                     title
                     isShared
+                    projectLastModified
                 }
                 ... on Error {
                     message

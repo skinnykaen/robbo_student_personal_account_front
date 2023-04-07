@@ -11,6 +11,7 @@ import config from '@/config'
 import { useActions } from '@/helpers'
 
 import { getProjectPageState } from '@/reducers/projectPage'
+import profile from '@/reducers/profile'
 
 const { TextArea } = Input
 
@@ -61,15 +62,16 @@ const ProjectPage = () => {
                                     title: projectPage.title,
                                     instruction: projectPage.instruction,
                                     notes: projectPage.notes,
+                                    isShared: projectPage.isShared,
                                 }}
-                                onFinish={({ title, instruction, notes }) => {
+                                onFinish={({ title, instruction, notes, isShared }) => {
                                     actions.updateProjectPage({
                                         projectPageId: projectPageId,
                                         projectId: projectPage.projectId,
                                         title: title,
                                         instruction: instruction,
                                         notes: notes,
-                                        isShared: projectPage.isShared,
+                                        isShared: isShared,
                                     })
                                 }}
                             >
@@ -98,32 +100,20 @@ const ProjectPage = () => {
                                     {projectPage.lastModified}
                                 </Form.Item>
                                 <Form.Item
+                                    // FIXME Formatted message 
                                     // label={<FormattedMessage id='project_page.last_change' />}
                                     label='Последнее изменение проекта'
                                 >
                                     {projectPage.projectLastModified}
                                 </Form.Item>
-                                {
-                                    projectPage.isShared
-                                        ? (
-                                            <Form.Item
-                                                name='isShared'
-                                                label={<FormattedMessage id='project_page.close_access' />}
-                                                valuePropName='checked'
-                                            >
-                                                <Switch defaultChecked onChange={() => { }} />
-                                            </Form.Item>
-                                        )
-                                        : (
-                                            <Form.Item
-                                                name='isShared'
-                                                label={<FormattedMessage id='project_page.open_access' />}
-                                                valuePropName='checked'
-                                            >
-                                                <Switch onChange={() => { }} />
-                                            </Form.Item>
-                                        )
-                                }
+
+                                <Form.Item
+                                    name='isShared'
+                                    label={<FormattedMessage id='project_page.open_access' />}
+                                    valuePropName='checked'
+                                >
+                                    <Switch />
+                                </Form.Item>
                                 <Form.Item >
                                     <Button
                                         type='primary' htmlType='submit'
@@ -144,15 +134,6 @@ const ProjectPage = () => {
             }
         </PageLayout >
     )
-}
-
-const layout = {
-    labelCol: {
-        span: 8,
-    },
-    wrapperCol: {
-        span: 16,
-    },
 }
 
 export default ProjectPage

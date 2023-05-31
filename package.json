@@ -1,11 +1,12 @@
 {
-  "name": "react-project-template",
+  "name": "lk_front",
   "version": "0.0.1",
   "private": true,
+  "homepage": "/lk",
   "scripts": {
     "start": "node server.js",
     "dev": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --open --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --config webpack.prod.js",
     "eslint:test": "eslint src --ext .js,.jsx",
     "eslint:fix": "eslint --fix src --ext .js,.jsx",
     "cypress": "start-server-and-test start http://localhost:3000 cypress:open",

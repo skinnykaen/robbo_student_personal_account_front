@@ -1,8 +1,13 @@
-FROM node:16-alpine
+FROM node:11
 WORKDIR /app
-COPY package.json /app/package.json
-RUN yarn install --only=prod
-COPY . /app
-RUN yarn build
+ENV PATH app/node_modules/.bin:$PATH
 
-ENTRYPOINT ["yarn", "start", "--port", "3000"]
+COPY package.json ./
+# COPY package-lock.json ./
+
+RUN npm install -legacy-peer-deps --production
+COPY . ./
+RUN npm run build -legacy-peer-deps
+
+# EXPOSE 3000
+# ENTRYPOINT ["yarn", "start"]

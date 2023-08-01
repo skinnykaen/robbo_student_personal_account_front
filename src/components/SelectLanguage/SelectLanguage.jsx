@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { FormattedMessage } from 'react-intl'
 import { Col, Row, Select, Typography } from 'antd'
@@ -11,12 +11,29 @@ const { Title } = Typography
 
 const SelectLanguage = () => {
     const actions = useActions({ changeLanguage }, [])
-    const { language, locale } = useSelector(({ app }) => getAppState(app))
     const languages = [
         { value: 'ru', label: 'Русский' },
         { value: 'en', label: 'English' },
         { value: 'zh', label: '中文' },
     ]
+    const [browserLanguage] = navigator.language.split('-')
+
+    const { language, locale } = useSelector(({ app }) => getAppState(app))
+    useEffect(() => {
+        switch (browserLanguage) {
+            case 'en':
+                actions.changeLanguage(languages[1].value)
+                break
+            case 'ru':
+                actions.changeLanguage(languages[0].value)
+                break
+            case 'zh':
+                actions.changeLanguage(languages[2].value)
+                break
+            default:
+                actions.changeLanguage(languages[1].value)
+        }
+    }, [browserLanguage])
 
     return (
         <Row align='middle'>

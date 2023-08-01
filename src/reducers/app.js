@@ -3,7 +3,7 @@ import { handleActions } from 'redux-actions'
 import { changeLanguage } from '@/actions'
 
 const INITIAL_STATE = {
-    language: 'ru',
+    language: 'en',
     locale: 'ru',
 }
 
